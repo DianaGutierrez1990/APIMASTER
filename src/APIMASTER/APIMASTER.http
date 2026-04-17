@@ -1,0 +1,6 @@
+@APIMASTER_HostAddress = http://localhost:5052
+
+GET {{APIMASTER_HostAddress}}/health
+Accept: application/json
+
+###

@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentaci&oacute;n T&eacute;cnica - Migraci&oacute;n API APIMASTER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2b6cb0;
+            --accent: #e53e3e;
+            --accent-green: #38a169;
+            --bg-light: #f7fafc;
+            --bg-card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            background: var(--bg-light);
+        }
+
+        /* ── Cover Page ── */
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 40px;
+            page-break-after: always;
+        }
+
+        .cover-logo {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .cover h1 {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        .cover .subtitle {
+            font-size: 20px;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 50px;
+            max-width: 600px;
+        }
+
+        .cover-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .cover-meta strong { font-weight: 600; }
+
+        .cover-line {
+            width: 80px;
+            height: 3px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 2px;
+            margin: 30px 0;
+        }
+
+        .cover-badge {
+            margin-top: 50px;
+            padding: 10px 24px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ── Content ── */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 40px;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            page-break-after: always;
+            padding: 50px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .toc h2 {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .toc-list {
+            list-style: none;
+            counter-reset: toc;
+        }
+
+        .toc-list li {
+            counter-increment: toc;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .toc-list li::before {
+            content: counter(toc, decimal-leading-zero);
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-right: 16px;
+            font-size: 18px;
+            min-width: 30px;
+        }
+
+        /* ── Sections ── */
+        .section {
+            page-break-before: always;
+        }
+
+        .section-header {
+            background: var(--primary);
+            color: white;
+            padding: 30px 40px;
+            margin: 0 -40px 40px -40px;
+            border-radius: 0;
+        }
+
+        .section-number {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+            margin-bottom: 6px;
+        }
+
+        .section-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 35px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin: 24px 0 10px 0;
+        }
+
+        p { margin-bottom: 14px; font-size: 14.5px; }
+
+        /* ── Cards ── */
+        .vuln-card {
+            background: #fff5f5;
+            border-left: 4px solid var(--accent);
+            padding: 16px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .vuln-card .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .vuln-card .title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .vuln-card .desc {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .fix-card {
+            background: #f0fff4;
+            border-left: 4px solid var(--accent-green);
+            padding: 16px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .fix-card .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 4px;
+        }
+
+        .fix-card .title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .fix-card .desc {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* ── Compare Table ── */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13.5px;
+        }
+
+        .compare-table thead th {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .compare-table tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .compare-table tbody tr:nth-child(even) { background: #f8fafc; }
+
+        .badge-old {
+            display: inline-block;
+            background: #fed7d7;
+            color: #c53030;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .badge-new {
+            display: inline-block;
+            background: #c6f6d5;
+            color: #276749;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* ── Stats Grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary-light);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* ── Architecture Diagram (ASCII) ── */
+        .diagram {
+            background: #1a202c;
+            color: #a0aec0;
+            padding: 24px;
+            border-radius: 10px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+            white-space: pre;
+        }
+
+        .diagram .highlight { color: #63b3ed; font-weight: 600; }
+        .diagram .green { color: #68d391; }
+        .diagram .yellow { color: #f6e05e; }
+        .diagram .red { color: #fc8181; }
+        .diagram .white { color: #e2e8f0; }
+
+        /* ── Code Block ── */
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 18px 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 14px 0;
+        }
+
+        .code-block .comment { color: #718096; }
+        .code-block .keyword { color: #63b3ed; }
+        .code-block .string { color: #68d391; }
+
+        /* ── Flow List ── */
+        .flow-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+
+        .flow-list li {
+            position: relative;
+            padding: 10px 0 10px 40px;
+            font-size: 14px;
+        }
+
+        .flow-list li::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            width: 26px;
+            height: 26px;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* ── Endpoint Table ── */
+        .endpoint-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 13px;
+        }
+
+        .endpoint-table thead th {
+            background: #edf2f7;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .endpoint-table tbody td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .method-get {
+            display: inline-block;
+            background: #c6f6d5;
+            color: #276749;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        .method-post {
+            display: inline-block;
+            background: #fefcbf;
+            color: #975a16;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        .method-put {
+            display: inline-block;
+            background: #bee3f8;
+            color: #2a4365;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        /* ── Info Box ── */
+        .info-box {
+            background: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+            font-size: 13.5px;
+        }
+
+        .info-box strong { color: var(--primary); }
+
+        /* ── Middleware Pipeline ── */
+        .pipeline {
+            margin: 20px 0;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            margin: 4px 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13.5px;
+        }
+
+        .pipeline-step .step-num {
+            width: 28px;
+            height: 28px;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .pipeline-step .step-name { font-weight: 600; }
+        .pipeline-step .step-desc {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .pipeline-arrow {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 16px;
+            margin: 0;
+            line-height: 1;
+        }
+
+        /* ── Footer ── */
+        .doc-footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        @media print {
+            body { background: white; }
+            .content { padding: 30px 20px; }
+            .section-header { margin: 0 -20px 30px -20px; }
+            .cover { min-height: auto; padding: 200px 40px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- COVER PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div class="cover">
+    <div class="cover-logo">API</div>
+    <h1>APIMASTER</h1>
+    <p class="subtitle">
+        Documentaci&oacute;n T&eacute;cnica de Migraci&oacute;n<br>
+        API Python Flask &rarr; .NET 10 Multi-Tenant
+    </p>
+    <div class="cover-line"></div>
+    <div class="cover-meta">
+        <span><strong>Empresa:</strong> Intelogix</span>
+        <span><strong>Proyecto:</strong> APIMASTER &mdash; Plataforma Dairy Industry</span>
+        <span><strong>Versi&oacute;n:</strong> 1.0</span>
+        <span><strong>Fecha:</strong> Abril 2026</span>
+        <span><strong>Elaborado por:</strong> Diana Guti&eacute;rrez R&iacute;os &mdash; Desarrollo</span>
+    </div>
+    <div class="cover-badge">Documento Confidencial</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="toc">
+    <h2>&Iacute;ndice de Contenido</h2>
+    <ol class="toc-list">
+        <li>Resumen Ejecutivo</li>
+        <li>An&aacute;lisis de Vulnerabilidades del Sistema Anterior</li>
+        <li>Arquitectura de la Nueva API (.NET 10)</li>
+        <li>Seguridad &mdash; Autenticaci&oacute;n con Keycloak</li>
+        <li>Seguridad &mdash; Multi-Tenancy y Aislamiento de Datos</li>
+        <li>Seguridad &mdash; Capas de Protecci&oacute;n Adicionales</li>
+        <li>Cat&aacute;logo de Endpoints Migrados</li>
+        <li>Infraestructura y Bases de Datos</li>
+        <li>Pipeline de Middleware</li>
+        <li>Validaci&oacute;n de Datos</li>
+        <li>Tests y Calidad</li>
+        <li>Comparativa Antes vs. Despu&eacute;s</li>
+        <li>Pr&oacute;ximos Pasos</li>
+    </ol>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 1: RESUMEN EJECUTIVO -->
+<!-- ══════════════════════════════════════════ -->
+<div class="content">
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 01</div>
+        <h2>Resumen Ejecutivo</h2>
+    </div>
+
+    <p>
+        Se complet&oacute; la migraci&oacute;n de la API de producci&oacute;n de la plataforma Dairy, pasando de una implementaci&oacute;n
+        en <strong>Python Flask</strong> a una nueva arquitectura basada en <strong>.NET 10 Web API</strong> con soporte
+        <strong>multi-tenant</strong>, autenticaci&oacute;n centralizada con <strong>Keycloak</strong>, y m&uacute;ltiples capas de seguridad.
+    </p>
+
+    <p>
+        La API anterior presentaba <strong>7 vulnerabilidades cr&iacute;ticas de seguridad</strong> y <strong>7 problemas
+        arquitect&oacute;nicos</strong> que pon&iacute;an en riesgo la integridad de los datos, la disponibilidad del servicio
+        y el cumplimiento de est&aacute;ndares de seguridad. Todas estas vulnerabilidades han sido remediadas en la nueva implementaci&oacute;n.
+    </p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">40+</div>
+            <div class="stat-label">Endpoints migrados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">6</div>
+            <div class="stat-label">Bases de datos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">14</div>
+            <div class="stat-label">Vulnerabilidades remediadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">5</div>
+            <div class="stat-label">M&oacute;dulos de negocio</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">22+</div>
+            <div class="stat-label">Validadores de input</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Niveles de autorizaci&oacute;n</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 2: VULNERABILIDADES -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 02</div>
+        <h2>An&aacute;lisis de Vulnerabilidades del Sistema Anterior</h2>
+    </div>
+
+    <p>
+        La API en Python Flask presentaba las siguientes vulnerabilidades de seguridad identificadas
+        durante el an&aacute;lisis previo a la migraci&oacute;n. Se clasifican seg&uacute;n severidad.
+    </p>
+
+    <h3>Vulnerabilidades de Seguridad</h3>
+
+    <div class="vuln-card">
+        <div class="label">Cr&iacute;tica &mdash; OWASP A03:2021 Injection</div>
+        <div class="title">V-01: SQL Injection en todos los endpoints</div>
+        <div class="desc">
+            Las consultas SQL se constru&iacute;an con f-strings de Python, concatenando directamente los par&aacute;metros del
+            usuario en el SQL: <code>f"SELECT * FROM MV_List('{startDate}', '{endDate}')"</code>.
+            Un atacante pod&iacute;a inyectar SQL arbitrario y acceder, modificar o eliminar datos de cualquiera de las 6 bases de datos.
+        </div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Cr&iacute;tica &mdash; OWASP A07:2021 Authentication Failures</div>
+        <div class="title">V-02: Sin autenticaci&oacute;n</div>
+        <div class="desc">
+            La API no ten&iacute;a ning&uacute;n middleware de autenticaci&oacute;n. Cualquier persona o bot con acceso a la URL
+            <code>http://168.197.51.133:9070</code> pod&iacute;a invocar cualquier endpoint sin restricci&oacute;n.
+        </div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Cr&iacute;tica &mdash; OWASP A02:2021 Cryptographic Failures</div>
+        <div class="title">V-03: Credenciales hardcodeadas en c&oacute;digo fuente</div>
+        <div class="desc">
+            El archivo <code>config/database.py</code> conten&iacute;a en texto plano los usuarios, contrase&ntilde;as e IPs de
+            6 servidores SQL Server y el archivo <code>config/ftpConfig.py</code> las credenciales FTP.
+            Cualquier persona con acceso al repositorio obten&iacute;a acceso directo a todos los servidores.
+        </div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Alta &mdash; OWASP A01:2021 Broken Access Control</div>
+        <div class="title">V-04: El cliente elige a qu&eacute; base de datos conectarse</div>
+        <div class="desc">
+            El body del request inclu&iacute;a un campo <code>"db": "General_Dairyi"</code> que permit&iacute;a al cliente
+            seleccionar la base de datos destino. Un atacante pod&iacute;a apuntar a cualquier BD del diccionario de conexiones.
+        </div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Alta &mdash; OWASP A05:2021 Security Misconfiguration</div>
+        <div class="title">V-05: CORS abierto sin restricci&oacute;n de origen</div>
+        <div class="desc">
+            La configuraci&oacute;n <code>CORS(app)</code> sin par&aacute;metros permit&iacute;a requests desde cualquier dominio,
+            facilitando ataques Cross-Site Request Forgery (CSRF).
+        </div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Alta &mdash; OWASP A05:2021 Security Misconfiguration</div>
+        <div class="title">V-06: Debug activo en producci&oacute;n</div>
+        <div class="desc">
+            <code>app.run(debug=True)</code> expon&iacute;a stack traces completos con rutas de archivos,
+            variables y c&oacute;digo fuente ante cualquier error, dando informaci&oacute;n valiosa a un atacante.
+        </div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Media &mdash; OWASP A04:2021 Insecure Design</div>
+        <div class="title">V-07: Sin headers de seguridad HTTP</div>
+        <div class="desc">
+            No se enviaban headers como <code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>,
+            <code>Content-Security-Policy</code> ni <code>Strict-Transport-Security</code>.
+        </div>
+    </div>
+
+    <h3>Problemas Arquitect&oacute;nicos</h3>
+
+    <div class="vuln-card">
+        <div class="label">Arquitectura</div>
+        <div class="title">A-01: Sin validaci&oacute;n de input</div>
+        <div class="desc">No se validaban tipos, formatos, rangos ni longitudes de los par&aacute;metros recibidos.</div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Arquitectura</div>
+        <div class="title">A-02: Sin rate limiting</div>
+        <div class="desc">Un cliente pod&iacute;a hacer requests ilimitados, abriendo la puerta a ataques de denegaci&oacute;n de servicio (DoS).</div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Arquitectura</div>
+        <div class="title">A-03: Sin auditor&iacute;a</div>
+        <div class="desc">No exist&iacute;a registro de qu&eacute; usuario ejecutaba qu&eacute; operaci&oacute;n ni cu&aacute;ndo.</div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Arquitectura</div>
+        <div class="title">A-04: Sin paginaci&oacute;n</div>
+        <div class="desc">Los endpoints retornaban todos los resultados sin l&iacute;mite, potencialmente miles de registros en una sola respuesta.</div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Arquitectura</div>
+        <div class="title">A-05: Todos los endpoints usan POST</div>
+        <div class="desc">Incluso las consultas de solo lectura usaban POST, violando los est&aacute;ndares REST.</div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Arquitectura</div>
+        <div class="title">A-06: Sin versionado de API</div>
+        <div class="desc">Las URLs no ten&iacute;an versi&oacute;n, imposibilitando cambios sin romper clientes existentes.</div>
+    </div>
+
+    <div class="vuln-card">
+        <div class="label">Arquitectura</div>
+        <div class="title">A-07: Instancia &uacute;nica sin failover</div>
+        <div class="desc">Una sola instancia Flask ejecut&aacute;ndose en un servidor. Si ca&iacute;a, todo el servicio se perd&iacute;a.</div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 3: ARQUITECTURA NUEVA -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 03</div>
+        <h2>Arquitectura de la Nueva API (.NET 10)</h2>
+    </div>
+
+    <p>
+        La nueva API fue dise&ntilde;ada con una arquitectura en capas que separa responsabilidades
+        y permite escalar cada componente de forma independiente.
+    </p>
+
+    <h3>Stack Tecnol&oacute;gico</h3>
+
+    <table class="compare-table">
+        <thead>
+            <tr>
+                <th>Componente</th>
+                <th>Tecnolog&iacute;a</th>
+                <th>Prop&oacute;sito</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Framework</td>
+                <td><strong>.NET 10 Web API</strong></td>
+                <td>Framework principal, versi&oacute;n LTS m&aacute;s reciente con soporte hasta Nov 2028</td>
+            </tr>
+            <tr>
+                <td>Acceso a datos</td>
+                <td><strong>Dapper 2.1</strong></td>
+                <td>Micro-ORM para ejecutar funciones y procedimientos de SQL Server</td>
+            </tr>
+            <tr>
+                <td>Autenticaci&oacute;n</td>
+                <td><strong>JWT Bearer + Keycloak</strong></td>
+                <td>Servidor de identidad centralizado que emite tokens de acceso</td>
+            </tr>
+            <tr>
+                <td>Validaci&oacute;n</td>
+                <td><strong>FluentValidation 11.3</strong></td>
+                <td>Validaci&oacute;n declarativa de todos los datos de entrada</td>
+            </tr>
+            <tr>
+                <td>SQL Server</td>
+                <td><strong>Microsoft.Data.SqlClient 7.0</strong></td>
+                <td>Driver moderno para SQL Server con encriptaci&oacute;n de conexi&oacute;n</td>
+            </tr>
+            <tr>
+                <td>Logging</td>
+                <td><strong>Serilog 10.0</strong></td>
+                <td>Sistema de registro de eventos con contexto de empresa y usuario</td>
+            </tr>
+            <tr>
+                <td>Documentaci&oacute;n</td>
+                <td><strong>Swagger / OpenAPI</strong></td>
+                <td>Documentaci&oacute;n interactiva y explorable de la API</td>
+            </tr>
+            <tr>
+                <td>Multi-Tenancy</td>
+                <td><strong>Entity Framework Core 10</strong></td>
+                <td>Interceptor de conexi&oacute;n para aislamiento de datos por empresa</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Explicaciones detalladas del stack -->
+    <h3>&iquest;Qu&eacute; es cada tecnolog&iacute;a y por qu&eacute; se eligi&oacute;?</h3>
+
+    <h4>.NET 10 Web API</h4>
+    <p>
+        <strong>.NET 10</strong> es la versi&oacute;n m&aacute;s reciente del framework de Microsoft para construir aplicaciones web
+        de alto rendimiento. Es una versi&oacute;n <strong>LTS (Long-Term Support)</strong>, lo que significa que Microsoft
+        garantiza actualizaciones de seguridad y parches hasta <strong>noviembre de 2028</strong>.
+        Se eligi&oacute; esta versi&oacute;n para mantener el proyecto en la tecnolog&iacute;a m&aacute;s actual disponible y
+        maximizar el tiempo de vida del soporte oficial.
+    </p>
+
+    <h4>Dapper &mdash; Acceso a Datos</h4>
+    <p>
+        <strong>Dapper</strong> es un micro-ORM (Object-Relational Mapper) de alto rendimiento desarrollado por el equipo de Stack Overflow.
+        Se eligi&oacute; Dapper en lugar de un ORM completo porque las <strong>6 bases de datos SQL Server ya exist&iacute;an</strong>
+        con todas sus funciones (Table-Valued Functions) y procedimientos almacenados (Stored Procedures) creados y en uso.
+        No se necesitaba crear tablas ni migraciones &mdash; solo ejecutar las funciones existentes de forma segura.
+    </p>
+    <p>
+        Dapper act&uacute;a como puente entre el c&oacute;digo C# y SQL Server: env&iacute;a las consultas con <strong>par&aacute;metros seguros</strong>
+        (eliminando el riesgo de SQL Injection que exist&iacute;a en Python) y convierte autom&aacute;ticamente los resultados de SQL
+        en objetos C# que la API retorna como JSON. Es hasta <strong>10x m&aacute;s r&aacute;pido</strong> que un ORM completo para
+        operaciones de solo lectura como las de este proyecto.
+    </p>
+
+    <h4>Keycloak + JWT &mdash; Autenticaci&oacute;n</h4>
+    <p>
+        <strong>Keycloak</strong> es un servidor de identidad open-source desarrollado por <strong>Red Hat</strong> (la misma empresa
+        detr&aacute;s de Linux Red Hat Enterprise). Funciona como el &ldquo;guardia de seguridad&rdquo; centralizado de toda la plataforma:
+        es el &uacute;nico sistema que verifica credenciales de usuarios y emite permisos de acceso.
+    </p>
+    <p>
+        <strong>JWT (JSON Web Token)</strong> es el formato est&aacute;ndar de la industria para tokens de acceso.
+        Cuando un usuario se autentica en Keycloak, recibe un token JWT firmado digitalmente que contiene:
+        su identidad, a qu&eacute; empresa pertenece (<code>tenant_id</code>), y qu&eacute; permisos tiene (<code>roles</code>).
+        Este token se env&iacute;a en cada solicitud a la API, que lo valida autom&aacute;ticamente sin necesidad de
+        consultar a Keycloak en cada petici&oacute;n &mdash; logrando m&aacute;xima seguridad con m&iacute;nimo impacto en rendimiento.
+    </p>
+    <p>
+        Se eligi&oacute; Keycloak por ser <strong>gratuito, on-premise</strong> (corre en nuestros propios servidores, sin depender de
+        servicios en la nube), soporta <strong>Single Sign-On (SSO)</strong>, protecci&oacute;n contra fuerza bruta,
+        y es usado por organizaciones como Bosch, Lufthansa y el Gobierno de Reino Unido.
+    </p>
+
+    <h4>Serilog &mdash; Logging Estructurado</h4>
+    <p>
+        <strong>Serilog</strong> es un sistema de registro de eventos (logging) que captura cada operaci&oacute;n de la API
+        con informaci&oacute;n contextual rica: qu&eacute; usuario hizo la operaci&oacute;n, de qu&eacute; empresa es, cu&aacute;nto tiempo tard&oacute;,
+        y si fue exitosa o fall&oacute;. A diferencia de los logs b&aacute;sicos de texto (como los que ten&iacute;a la API en Python),
+        Serilog genera <strong>logs estructurados</strong> que se pueden consultar, filtrar y analizar &mdash; por ejemplo:
+        &ldquo;mostrar todas las operaciones fallidas de la empresa X en los &uacute;ltimos 7 d&iacute;as&rdquo;.
+    </p>
+    <p>
+        Esto es esencial para <strong>auditor&iacute;a</strong> (saber qui&eacute;n hizo qu&eacute; y cu&aacute;ndo), <strong>diagn&oacute;stico de problemas</strong>
+        (identificar r&aacute;pidamente la causa de errores), y <strong>monitoreo de rendimiento</strong> (detectar endpoints lentos
+        o patrones de uso inusuales).
+    </p>
+
+    <h4>Entity Framework Core 10 &mdash; Multi-Tenancy (50+ empresas)</h4>
+    <p>
+        <strong>Entity Framework Core</strong> se utiliza espec&iacute;ficamente para implementar el <strong>aislamiento multi-tenant</strong>
+        de la plataforma. Multi-tenancy significa que <strong>una sola instancia de la API atiende a m&aacute;s de 50 empresas
+        simult&aacute;neamente</strong>, pero cada empresa solo puede ver y modificar sus propios datos &mdash; como si cada una
+        tuviera su propio sistema privado.
+    </p>
+    <p>
+        El mecanismo funciona as&iacute;: cada vez que la API abre una conexi&oacute;n a la base de datos, el interceptor de EF Core
+        ejecuta autom&aacute;ticamente un comando SQL (<code>sp_set_session_context</code>) que le dice a SQL Server:
+        &ldquo;esta conexi&oacute;n pertenece a la empresa X&rdquo;. SQL Server entonces aplica <strong>Row-Level Security (RLS)</strong>,
+        un mecanismo nativo del motor de base de datos que <strong>filtra autom&aacute;ticamente las filas</strong> para que solo
+        se devuelvan datos de esa empresa. Esto garantiza el aislamiento incluso si hubiera un error en el c&oacute;digo de la API.
+    </p>
+
+    <h3>Diagrama de Arquitectura</h3>
+
+    <div class="diagram"><span class="white">    Clientes (Mobile App / Web App)</span>
+              <span class="yellow">|</span>
+              <span class="yellow">v</span>
+    <span class="highlight">+----------------------------------+</span>
+    <span class="highlight">|</span>         <span class="green">KEYCLOAK</span>                <span class="highlight">|</span>
+    <span class="highlight">|</span>   Identity Provider (JWT)       <span class="highlight">|</span>
+    <span class="highlight">|</span>   Realm: plataforma             <span class="highlight">|</span>
+    <span class="highlight">+----------------------------------+</span>
+              <span class="yellow">|</span> Token JWT (tenant_id, roles)
+              <span class="yellow">v</span>
+    <span class="highlight">+----------------------------------+</span>
+    <span class="highlight">|</span>       <span class="green">APIMASTER .NET 10</span>          <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Security Headers Middleware</span>    <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Error Handling Middleware</span>      <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Rate Limiter (per-tenant)</span>     <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">JWT Authentication</span>            <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Authorization (Policies)</span>      <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Tenant Middleware</span>             <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Audit Middleware</span>              <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Controllers + Services</span>       <span class="highlight">|</span>
+    <span class="highlight">+----------------------------------+</span>
+              <span class="yellow">|</span> Dapper (parametrized queries)
+              <span class="yellow">v</span>
+    <span class="highlight">+----------------------------------+</span>
+    <span class="highlight">|</span>    <span class="green">SQL Server (6 Bases)</span>         <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">Cross | GeneralDairyi | General</span> <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">ApprovalProd | iScaleOutlier</span>  <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="white">ICCManager</span>                    <span class="highlight">|</span>
+    <span class="highlight">|</span>  <span class="red">SESSION_CONTEXT + RLS</span>         <span class="highlight">|</span>
+    <span class="highlight">+----------------------------------+</span></div>
+
+    <h3>Estructura del Proyecto</h3>
+
+    <!-- Diagrama visual de estructura -->
+    <div style="margin: 20px 0;">
+
+        <!-- Root -->
+        <div style="background: #1a365d; color: white; padding: 14px 20px; border-radius: 10px 10px 0 0; font-weight: 700; font-size: 16px; letter-spacing: 0.5px;">
+            APIMASTER &mdash; Estructura del Proyecto
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 2px solid #1a365d; border-top: none; border-radius: 0 0 10px 10px; overflow: hidden;">
+
+            <!-- Columna 1: src/APIMASTER -->
+            <div style="border-right: 1px solid #e2e8f0; padding: 0;">
+                <div style="background: #2b6cb0; color: white; padding: 10px 14px; font-weight: 600; font-size: 13px;">
+                    src / APIMASTER
+                </div>
+
+                <div style="padding: 6px 12px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; font-size: 12px;">
+                    <strong style="color: #2b6cb0;">Authentication/</strong><br>
+                    <span style="color: #718096;">JWT + Keycloak + DevAuth</span>
+                </div>
+                <div style="padding: 6px 12px; background: white; border-bottom: 1px solid #e2e8f0; font-size: 12px;">
+                    <strong style="color: #2b6cb0;">Authorization/</strong><br>
+                    <span style="color: #718096;">Pol&iacute;ticas Reader/Writer/Admin</span>
+                </div>
+                <div style="padding: 6px 12px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; font-size: 12px;">
+                    <strong style="color: #2b6cb0;">Controllers / V1 /</strong><br>
+                    <span style="color: #718096;">
+                        &bull; DairyMobile (Milk, Harvest, Commodities, Transfer)<br>
+                        &bull; Cross (Captures, Catalogs)<br>
+                        &bull; ScaleI (Devices, Captures)<br>
+                        &bull; Approvals (Documents, Questions)<br>
+                        &bull; Health &amp; Diagnostics
+                    </span>
+                </div>
+                <div style="padding: 6px 12px; background: white; border-bottom: 1px solid #e2e8f0; font-size: 12px;">
+                    <strong style="color: #2b6cb0;">Services/</strong><br>
+                    <span style="color: #718096;">8 servicios de negocio con Dapper</span>
+                </div>
+                <div style="padding: 6px 12px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; font-size: 12px;">
+                    <strong style="color: #2b6cb0;">Validation/</strong><br>
+                    <span style="color: #718096;">22+ validadores FluentValidation</span>
+                </div>
+                <div style="padding: 6px 12px; background: white; font-size: 12px;">
+                    <strong style="color: #2b6cb0;">Program.cs</strong><br>
+                    <span style="color: #718096;">Pipeline completo de la aplicaci&oacute;n</span>
+                </div>
+            </div>
+
+            <!-- Columna 2: Capas internas -->
+            <div style="border-right: 1px solid #e2e8f0; padding: 0;">
+                <div style="background: #38a169; color: white; padding: 10px 14px; font-weight: 600; font-size: 13px;">
+                    Capas de Datos y Seguridad
+                </div>
+
+                <div style="padding: 6px 12px; background: #f0fff4; border-bottom: 1px solid #c6f6d5; font-size: 12px;">
+                    <strong style="color: #276749;">Data / Entities /</strong><br>
+                    <span style="color: #718096;">25+ entidades mapeadas a TVFs de SQL Server</span>
+                </div>
+                <div style="padding: 6px 12px; background: white; border-bottom: 1px solid #e2e8f0; font-size: 12px;">
+                    <strong style="color: #276749;">Models / Requests /</strong><br>
+                    <span style="color: #718096;">DTOs de entrada con validaci&oacute;n</span>
+                </div>
+                <div style="padding: 6px 12px; background: #f0fff4; border-bottom: 1px solid #c6f6d5; font-size: 12px;">
+                    <strong style="color: #276749;">Models / Responses /</strong><br>
+                    <span style="color: #718096;">DTOs de salida (ApiResponse, Paginated, Error)</span>
+                </div>
+                <div style="padding: 6px 12px; background: white; border-bottom: 1px solid #e2e8f0; font-size: 12px;">
+                    <strong style="color: #276749;">MultiTenancy /</strong><br>
+                    <span style="color: #718096;">TenantContext + TenantMiddleware + DbInterceptor</span>
+                </div>
+                <div style="padding: 6px 12px; background: #f0fff4; border-bottom: 1px solid #c6f6d5; font-size: 12px;">
+                    <strong style="color: #276749;">Middleware /</strong><br>
+                    <span style="color: #718096;">SecurityHeaders + ErrorHandling + Audit</span>
+                </div>
+                <div style="padding: 6px 12px; background: white; font-size: 12px;">
+                    <strong style="color: #276749;">Data / SqlFunctions /</strong><br>
+                    <span style="color: #718096;">Wrappers para TVFs de SQL Server</span>
+                </div>
+            </div>
+
+            <!-- Columna 3: Tests + Infra -->
+            <div style="padding: 0;">
+                <div style="background: #d69e2e; color: white; padding: 10px 14px; font-weight: 600; font-size: 13px;">
+                    Tests e Infraestructura
+                </div>
+
+                <div style="padding: 6px 12px; background: #fffff0; border-bottom: 1px solid #fefcbf; font-size: 12px;">
+                    <strong style="color: #975a16;">tests / Integration /</strong><br>
+                    <span style="color: #718096;">Tests end-to-end con WebApplicationFactory</span>
+                </div>
+                <div style="padding: 6px 12px; background: white; border-bottom: 1px solid #e2e8f0; font-size: 12px;">
+                    <strong style="color: #975a16;">tests / Validation /</strong><br>
+                    <span style="color: #718096;">Tests unitarios de validadores</span>
+                </div>
+                <div style="padding: 6px 12px; background: #fffff0; border-bottom: 1px solid #fefcbf; font-size: 12px;">
+                    <strong style="color: #975a16;">tests / Services /</strong><br>
+                    <span style="color: #718096;">Tests de servicios y DatabaseResolver</span>
+                </div>
+
+                <div style="padding: 6px 12px; background: #e2e8f0; border-bottom: 1px solid #cbd5e0; border-top: 2px solid #a0aec0; font-size: 12px;">
+                    <strong style="color: #4a5568;">infrastructure / keycloak /</strong><br>
+                    <span style="color: #718096;">Configuraci&oacute;n del realm exportada (JSON)</span>
+                </div>
+                <div style="padding: 6px 12px; background: white; border-bottom: 1px solid #e2e8f0; font-size: 12px;">
+                    <strong style="color: #4a5568;">infrastructure / sql /</strong><br>
+                    <span style="color: #718096;">Scripts de Row-Level Security</span>
+                </div>
+                <div style="padding: 6px 12px; background: #e2e8f0; font-size: 12px;">
+                    <strong style="color: #4a5568;">APIMASTER.sln</strong><br>
+                    <span style="color: #718096;">Soluci&oacute;n principal del proyecto</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 4: KEYCLOAK -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 04</div>
+        <h2>Seguridad &mdash; Autenticaci&oacute;n con Keycloak</h2>
+    </div>
+
+    <p>
+        <strong>Keycloak</strong> es un Identity Provider open-source (Red Hat) que centraliza la autenticaci&oacute;n
+        de todos los usuarios y aplicaciones. Reemplaza la ausencia total de autenticaci&oacute;n que ten&iacute;a la API anterior.
+    </p>
+
+    <h3>Flujo de Autenticaci&oacute;n</h3>
+
+    <div class="diagram"><span class="white">1. El usuario abre la app m&oacute;vil o web</span>
+              <span class="yellow">|</span>
+              <span class="yellow">v</span>
+<span class="highlight">2. La app redirige al login de Keycloak</span>
+   Usuario ingresa credenciales
+              <span class="yellow">|</span>
+              <span class="yellow">v</span>
+<span class="green">3. Keycloak valida credenciales y genera un TOKEN JWT</span>
+   El token contiene:
+     - <span class="white">sub</span>: ID del usuario
+     - <span class="white">tenant_id</span>: UUID de la empresa
+     - <span class="white">tenant_name</span>: Nombre de la empresa
+     - <span class="white">roles</span>: [admin, writer, reader]
+     - <span class="white">exp</span>: Expiraci&oacute;n (15 minutos)
+              <span class="yellow">|</span>
+              <span class="yellow">v</span>
+<span class="highlight">4. La app env&iacute;a el token en cada request a la API</span>
+   Header: Authorization: Bearer eyJhbG...
+              <span class="yellow">|</span>
+              <span class="yellow">v</span>
+<span class="green">5. La API valida el token LOCALMENTE</span>
+   - Verifica firma con llave p&uacute;blica de Keycloak (JWKS)
+   - Verifica que no est&eacute; expirado
+   - Verifica que el audience sea "api-principal"
+   - Extrae tenant_id y roles de los claims
+              <span class="yellow">|</span>
+              <span class="yellow">v</span>
+<span class="white">6. Request autorizado &rarr; se ejecuta el endpoint</span></div>
+
+    <h3>Configuraci&oacute;n del Realm</h3>
+
+    <p>El realm <strong>"plataforma"</strong> en Keycloak est&aacute; configurado con:</p>
+
+    <table class="compare-table">
+        <thead>
+            <tr><th>Par&aacute;metro</th><th>Valor</th><th>Descripci&oacute;n</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>SSL</td><td>Requerido externamente</td><td>Fuerza HTTPS para conexiones externas</td></tr>
+            <tr><td>Registro p&uacute;blico</td><td>Deshabilitado</td><td>Solo admins crean usuarios</td></tr>
+            <tr><td>Protecci&oacute;n brute force</td><td>Habilitada</td><td>Bloquea despu&eacute;s de 5 intentos fallidos</td></tr>
+            <tr><td>Tiempo de bloqueo</td><td>15 minutos m&aacute;x</td><td>Incremento progresivo: 60s, 60s, 60s...</td></tr>
+            <tr><td>Token de acceso</td><td>15 minutos</td><td>Expira en 900 segundos</td></tr>
+            <tr><td>Sesi&oacute;n SSO idle</td><td>30 minutos</td><td>Sesi&oacute;n inactiva se cierra</td></tr>
+            <tr><td>Sesi&oacute;n SSO m&aacute;xima</td><td>10 horas</td><td>Sesi&oacute;n activa m&aacute;xima</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Clientes Registrados</h3>
+
+    <table class="compare-table">
+        <thead>
+            <tr><th>Client ID</th><th>Tipo</th><th>Uso</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>api-principal</strong></td>
+                <td>Confidencial (client secret)</td>
+                <td>Backend API &mdash; valida tokens, service accounts habilitado</td>
+            </tr>
+            <tr>
+                <td><strong>mobile-app</strong></td>
+                <td>P&uacute;blico</td>
+                <td>App m&oacute;vil Dairy &mdash; login directo de usuarios</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Roles Definidos</h3>
+
+    <table class="compare-table">
+        <thead>
+            <tr><th>Rol</th><th>Descripci&oacute;n</th><th>Permisos en la API</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge-new">admin</span></td>
+                <td>Administraci&oacute;n total del tenant</td>
+                <td>Lectura + Escritura + Administraci&oacute;n</td>
+            </tr>
+            <tr>
+                <td><span class="badge-new">writer</span></td>
+                <td>Puede crear y modificar recursos</td>
+                <td>Lectura + Escritura</td>
+            </tr>
+            <tr>
+                <td><span class="badge-new">reader</span></td>
+                <td>Solo lectura</td>
+                <td>Lectura</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Claims Personalizados en el Token</h3>
+
+    <p>Keycloak inyecta claims personalizados en cada token JWT mediante Protocol Mappers:</p>
+
+    <table class="compare-table">
+        <thead>
+            <tr><th>Claim</th><th>Tipo</th><th>Ejemplo</th><th>Uso en API</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>tenant_id</code></td>
+                <td>String (UUID)</td>
+                <td>00000000-0000-0000-0000-000000000001</td>
+                <td>Identificar empresa, filtrar datos, SESSION_CONTEXT</td>
+            </tr>
+            <tr>
+                <td><code>tenant_name</code></td>
+                <td>String</td>
+                <td>Empresa Demo</td>
+                <td>Logging y auditor&iacute;a</td>
+            </tr>
+            <tr>
+                <td><code>roles</code></td>
+                <td>Array</td>
+                <td>["admin", "writer"]</td>
+                <td>Pol&iacute;ticas de autorizaci&oacute;n</td>
+            </tr>
+            <tr>
+                <td><code>sub</code></td>
+                <td>String (UUID)</td>
+                <td>UUID del usuario</td>
+                <td>Identificar usuario en auditor&iacute;a</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="info-box">
+        <strong>Importante:</strong> La API nunca genera tokens. Keycloak es el &uacute;nico emisor.
+        La API solo valida la firma del token usando las llaves p&uacute;blicas descargadas autom&aacute;ticamente
+        desde el endpoint JWKS de Keycloak. Esto significa que la API no necesita conexi&oacute;n a Keycloak
+        en cada request &mdash; solo al arrancar.
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 5: MULTI-TENANCY -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 05</div>
+        <h2>Seguridad &mdash; Multi-Tenancy y Aislamiento de Datos</h2>
+    </div>
+
+    <p>
+        La arquitectura multi-tenant permite que <strong>una sola instancia de la API</strong> atienda a m&uacute;ltiples
+        empresas (tenants) con <strong>aislamiento total de datos</strong>. Cada empresa solo puede ver y modificar sus propios datos.
+    </p>
+
+    <h3>Capas de Aislamiento</h3>
+
+    <div class="diagram"><span class="green">CAPA 1: Token JWT</span>
+  Keycloak emite tokens con <span class="white">tenant_id</span> espec&iacute;fico por usuario
+  Un usuario de Empresa A nunca recibe un token con tenant de Empresa B
+
+<span class="green">CAPA 2: Tenant Middleware</span>
+  Extrae <span class="white">tenant_id</span> del token JWT en cada request
+  Rechaza con <span class="red">403 Forbidden</span> si no tiene tenant_id v&aacute;lido
+  Lo inyecta como servicio scoped para toda la pipeline
+
+<span class="green">CAPA 3: SQL Server SESSION_CONTEXT</span>
+  El <span class="white">TenantDbInterceptor</span> ejecuta en CADA conexi&oacute;n a BD:
+  <span class="highlight">EXEC sp_set_session_context @key=N'TenantId', @value=@tid, @read_only=1;</span>
+  El <span class="white">@read_only=1</span> impide que c&oacute;digo posterior lo modifique
+
+<span class="green">CAPA 4: Row-Level Security (RLS)</span>
+  SQL Server filtra autom&aacute;ticamente las filas seg&uacute;n el TenantId en SESSION_CONTEXT
+  <span class="highlight">Incluso si hay un bug en la API</span>, la BD no devuelve datos de otro tenant</div>
+
+    <h3>Pol&iacute;ticas de Autorizaci&oacute;n</h3>
+
+    <table class="compare-table">
+        <thead>
+            <tr><th>Pol&iacute;tica</th><th>Requisitos</th><th>Aplicada en</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>TenantReader</strong></td>
+                <td>Autenticado + claim <code>tenant_id</code></td>
+                <td>Todos los endpoints GET (lectura)</td>
+            </tr>
+            <tr>
+                <td><strong>TenantWriter</strong></td>
+                <td>Autenticado + <code>tenant_id</code> + rol <code>writer</code> o <code>admin</code></td>
+                <td>Endpoints POST/PUT (escritura)</td>
+            </tr>
+            <tr>
+                <td><strong>TenantAdmin</strong></td>
+                <td>Autenticado + <code>tenant_id</code> + rol <code>admin</code></td>
+                <td>Operaciones administrativas</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 6: PROTECCIONES ADICIONALES -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 06</div>
+        <h2>Seguridad &mdash; Capas de Protecci&oacute;n Adicionales</h2>
+    </div>
+
+    <h3>Rate Limiting por Tenant</h3>
+    <p>
+        Se implementa una ventana deslizante (sliding window) por tenant para prevenir abuso y ataques DoS.
+    </p>
+    <table class="compare-table">
+        <thead><tr><th>Par&aacute;metro</th><th>Valor</th></tr></thead>
+        <tbody>
+            <tr><td>L&iacute;mite de requests</td><td>200 por ventana</td></tr>
+            <tr><td>Ventana de tiempo</td><td>1 minuto</td></tr>
+            <tr><td>Segmentos</td><td>4 (ventana deslizante de 15s)</td></tr>
+            <tr><td>Respuesta al exceder</td><td>HTTP 429 Too Many Requests</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Security Headers</h3>
+    <p>Cada respuesta de la API incluye headers de seguridad HTTP:</p>
+    <table class="compare-table">
+        <thead><tr><th>Header</th><th>Valor</th><th>Protecci&oacute;n</th></tr></thead>
+        <tbody>
+            <tr><td>X-Content-Type-Options</td><td>nosniff</td><td>Previene MIME sniffing</td></tr>
+            <tr><td>X-Frame-Options</td><td>DENY</td><td>Previene clickjacking</td></tr>
+            <tr><td>Content-Security-Policy</td><td>default-src 'self'</td><td>Restringe fuentes de contenido</td></tr>
+            <tr><td>Strict-Transport-Security</td><td>max-age=31536000; includeSubDomains</td><td>Fuerza HTTPS</td></tr>
+            <tr><td>X-Powered-By</td><td>(eliminado)</td><td>Oculta tecnolog&iacute;a del servidor</td></tr>
+            <tr><td>Server</td><td>(eliminado)</td><td>Oculta software del servidor</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Manejo Global de Errores</h3>
+    <p>
+        El <code>ErrorHandlingMiddleware</code> captura todas las excepciones y retorna respuestas en formato
+        <strong>RFC 7807 (Problem Details)</strong>. Nunca se exponen stack traces ni informaci&oacute;n interna en producci&oacute;n.
+    </p>
+    <div class="code-block"><span class="comment">// Ejemplo de respuesta de error (producci&oacute;n)</span>
+{
+  <span class="string">"type"</span>: <span class="string">"https://api.tuempresa.com/errors/validation"</span>,
+  <span class="string">"title"</span>: <span class="string">"Validation error"</span>,
+  <span class="string">"status"</span>: <span class="keyword">400</span>,
+  <span class="string">"detail"</span>: <span class="string">"One or more fields failed validation."</span>,
+  <span class="string">"requestId"</span>: <span class="string">"0HN8ABC123"</span>,
+  <span class="string">"errors"</span>: {
+    <span class="string">"startDate"</span>: [<span class="string">"startDate is required"</span>],
+    <span class="string">"endDate"</span>: [<span class="string">"endDate must be after startDate"</span>]
+  }
+}</div>
+
+    <h3>Auditor&iacute;a</h3>
+    <p>
+        El <code>AuditMiddleware</code> registra cada operaci&oacute;n con:
+    </p>
+    <ul style="margin: 10px 0 10px 24px; font-size: 14px;">
+        <li>M&eacute;todo HTTP y ruta</li>
+        <li>C&oacute;digo de respuesta</li>
+        <li>ID del usuario (del claim <code>sub</code>)</li>
+        <li>ID del tenant</li>
+        <li>Duraci&oacute;n del request</li>
+        <li>Operaciones de escritura (POST/PUT/DELETE) se logean con nivel AUDIT</li>
+    </ul>
+
+    <h3>Consultas SQL Parametrizadas</h3>
+    <div class="fix-card">
+        <div class="label">Remediaci&oacute;n de SQL Injection</div>
+        <div class="title">Todas las consultas usan par&aacute;metros con Dapper</div>
+        <div class="desc">
+            Se reemplazaron las f-strings de Python por queries parametrizadas. Los valores del usuario nunca
+            se concatenan en el SQL.
+        </div>
+    </div>
+    <div class="code-block"><span class="comment">// ANTES (Python) - VULNERABLE:</span>
+<span class="red">f"SELECT * FROM MV_List('{startDate}', '{endDate}')"</span>
+
+<span class="comment">// AHORA (.NET) - SEGURO:</span>
+<span class="green">conn.QueryAsync&lt;T&gt;(</span>
+<span class="green">    "SELECT * FROM MV_List_Milk_Customers(@startDate, @endDate, @locationId)",</span>
+<span class="green">    new { startDate, endDate, locationId });</span></div>
+
+    <h3>CORS Restringido</h3>
+    <div class="fix-card">
+        <div class="label">Remediaci&oacute;n de CORS abierto</div>
+        <div class="title">Solo or&iacute;genes autorizados pueden hacer requests</div>
+        <div class="desc">
+            Producci&oacute;n: solo <code>https://app.tuempresa.com</code>. Desarrollo: <code>localhost:3000</code> y <code>localhost:5173</code>. Configurable via <code>appsettings.json</code>.
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 7: CATALOGO DE ENDPOINTS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 07</div>
+        <h2>Cat&aacute;logo de Endpoints Migrados</h2>
+    </div>
+
+    <h3>M&oacute;dulo Dairy Mobile &mdash; Milk (8 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/customers</td><td>Clientes de leche con paginaci&oacute;n</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/dairies</td><td>Lista de lecher&iacute;as</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/loads</td><td>Cargas por fecha/lecher&iacute;a</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/loads/search</td><td>Buscar por ticket/manifiesto</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/summary/customer</td><td>Resumen por cliente</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/summary/customer-dairy</td><td>Resumen por lecher&iacute;a</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/delivery-status</td><td>Status mensual de entregas</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/milk/images/{id}</td><td>Im&aacute;genes de una carga</td><td>TenantReader</td></tr>
+        </tbody>
+    </table>
+
+    <h3>M&oacute;dulo Dairy Mobile &mdash; Harvest (5 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/harvest/list</td><td>Lista de cosechas</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/harvest/field-summary</td><td>Resumen de campo</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/harvest/filters</td><td>Filtros disponibles</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/harvest/drymatter</td><td>Materia seca por campo</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/harvest/loads</td><td>Cargas por campo</td><td>TenantReader</td></tr>
+        </tbody>
+    </table>
+
+    <h3>M&oacute;dulo Dairy Mobile &mdash; Commodities (6 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/commodities/pickup</td><td>Commodities para pickup</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/commodities/delivery</td><td>Commodities para entrega</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/commodities/vendors</td><td>Lista de vendors</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/commodities/loads</td><td>Cargas de commodities</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/commodities/tickets/search</td><td>Buscar tickets</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/commodities/summary</td><td>Resumen de commodity</td><td>TenantReader</td></tr>
+        </tbody>
+    </table>
+
+    <h3>M&oacute;dulo Dairy Mobile &mdash; Transfers (5 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/transfers/commodities</td><td>Transferencias de commodities</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/transfers/dairies</td><td>Transferencias entre lecher&iacute;as</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/transfers/loads</td><td>Cargas de transferencia</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/transfers/summary/commodity</td><td>Resumen por commodity</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/dairy/transfers/summary/route</td><td>Resumen por ruta</td><td>TenantReader</td></tr>
+        </tbody>
+    </table>
+
+    <h3>M&oacute;dulo Cross &mdash; Captures (5 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/cross/captures/milk-loads</td><td>Cargas del usuario</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/cross/captures/milk-loads/{id}/images</td><td>Im&aacute;genes de carga</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/cross/captures/milk-loads</td><td>Crear/actualizar carga</td><td>TenantWriter</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/cross/captures/milk-loads/with-images</td><td>Carga con m&uacute;ltiples im&aacute;genes</td><td>TenantWriter</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/cross/captures/milk-loads/{id}/images/others</td><td>Im&aacute;genes adicionales</td><td>TenantWriter</td></tr>
+        </tbody>
+    </table>
+
+    <h3>M&oacute;dulo Cross &mdash; Catalogs (4 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/cross/catalogs/customer-dairy-barn-silos</td><td>Cat&aacute;logo completo</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/cross/catalogs/trucks</td><td>Camiones disponibles</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/cross/catalogs/drivers</td><td>Conductores disponibles</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/cross/catalogs/{type}</td><td>Cat&aacute;logo por tipo</td><td>TenantReader</td></tr>
+        </tbody>
+    </table>
+
+    <h3>M&oacute;dulo Scale I (6 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/scalei/get-list</td><td>Lista de capturas del usuario</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/scalei/get-load</td><td>Captura individual</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/scalei/store</td><td>Guardar evidencia</td><td>TenantWriter</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/scalei/store-bulk</td><td>Guardar m&uacute;ltiples evidencias</td><td>TenantWriter</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/scalei/save-pulse</td><td>Pulso de dispositivo</td><td>TenantWriter</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/scalei/validate-version</td><td>Validar versi&oacute;n de app</td><td>TenantReader</td></tr>
+        </tbody>
+    </table>
+
+    <h3>M&oacute;dulo Approvals (5 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/approvals/managers</td><td>Lista de managers</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/approvals/documents</td><td>Subir documento</td><td>TenantWriter</td></tr>
+            <tr><td><span class="method-post">POST</span></td><td>/api/v1/approvals/questions</td><td>Crear pregunta</td><td>TenantWriter</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/approvals/questions/asked</td><td>Preguntas realizadas</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/v1/approvals/questions/pending</td><td>Preguntas por responder</td><td>TenantReader</td></tr>
+            <tr><td><span class="method-put">PUT</span></td><td>/api/v1/approvals/questions/{id}/status</td><td>Cambiar status</td><td>TenantWriter</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Health &amp; Diagnostics (2 endpoints)</h3>
+    <table class="endpoint-table">
+        <thead><tr><th>M&eacute;todo</th><th>Ruta</th><th>Descripci&oacute;n</th><th>Pol&iacute;tica</th></tr></thead>
+        <tbody>
+            <tr><td><span class="method-get">GET</span></td><td>/api/health</td><td>Health check b&aacute;sico</td><td>An&oacute;nimo</td></tr>
+            <tr><td><span class="method-get">GET</span></td><td>/api/health/detailed</td><td>Conectividad a las 6 BDs</td><td>An&oacute;nimo</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 8: INFRAESTRUCTURA -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 08</div>
+        <h2>Infraestructura y Bases de Datos</h2>
+    </div>
+
+    <h3>Servidores SQL Server</h3>
+
+    <table class="compare-table">
+        <thead>
+            <tr><th>Servidor</th><th>Base de Datos</th><th>M&oacute;dulos que la usan</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="5"><strong>35.223.136.179</strong><br><small>(Google Cloud)</small></td>
+                <td>Cross</td>
+                <td>Cross Captures, Cross Catalogs</td>
+            </tr>
+            <tr>
+                <td>General_Dairyi</td>
+                <td>Referencia general dairy</td>
+            </tr>
+            <tr>
+                <td>General</td>
+                <td>Datos generales</td>
+            </tr>
+            <tr>
+                <td>Approval_Prod</td>
+                <td>Approvals (documentos, preguntas)</td>
+            </tr>
+            <tr>
+                <td>iScale_Outlier</td>
+                <td>Scale I outlier handling</td>
+            </tr>
+            <tr>
+                <td><strong>69.55.25.201</strong></td>
+                <td>ICCManager</td>
+                <td>Dairy Mobile (Milk, Harvest, Commodities, Transfer), Scale I</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Database Resolver</h3>
+    <p>
+        El servicio <code>DatabaseResolver</code> mapea cada m&oacute;dulo de negocio a su connection string correspondiente.
+        El servidor determina la BD seg&uacute;n el endpoint &mdash; <strong>el cliente ya no elige la base de datos</strong>.
+    </p>
+
+    <table class="compare-table">
+        <thead><tr><th>M&oacute;dulo</th><th>Conexi&oacute;n</th></tr></thead>
+        <tbody>
+            <tr><td>dairy / milk / harvest / commodities / transfer</td><td>ICCManager</td></tr>
+            <tr><td>cross</td><td>Cross</td></tr>
+            <tr><td>approvals</td><td>ApprovalProd</td></tr>
+            <tr><td>scalei</td><td>ICCManager</td></tr>
+            <tr><td>images (MV_Milk_Load_Images)</td><td>Cross</td></tr>
+        </tbody>
+    </table>
+
+    <div class="info-box">
+        <strong>Credenciales:</strong> Todas las credenciales se almacenan en <code>appsettings.json</code>
+        (o variables de entorno en producci&oacute;n), nunca en c&oacute;digo fuente. El archivo <code>appsettings.Development.json</code>
+        est&aacute; en <code>.gitignore</code> y no se sube al repositorio.
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 9: PIPELINE -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 09</div>
+        <h2>Pipeline de Middleware</h2>
+    </div>
+
+    <p>
+        Cada request HTTP pasa por la siguiente cadena de middleware en orden estricto.
+        El orden es cr&iacute;tico: la autenticaci&oacute;n debe ocurrir antes de la autorizaci&oacute;n,
+        y el tenant debe resolverse despu&eacute;s de autenticar.
+    </p>
+
+    <div class="pipeline">
+        <div class="pipeline-step">
+            <span class="step-num">1</span>
+            <span class="step-name">Security Headers</span>
+            <span class="step-desc">Agrega headers de seguridad HTTP a la respuesta</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">2</span>
+            <span class="step-name">Error Handling</span>
+            <span class="step-desc">Captura excepciones &rarr; RFC 7807 Problem Details</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">3</span>
+            <span class="step-name">HTTPS Redirect</span>
+            <span class="step-desc">Redirige HTTP a HTTPS</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">4</span>
+            <span class="step-name">CORS</span>
+            <span class="step-desc">Valida or&iacute;genes permitidos</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">5</span>
+            <span class="step-name">Rate Limiter</span>
+            <span class="step-desc">200 req/min por tenant (ventana deslizante)</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">6</span>
+            <span class="step-name">Authentication</span>
+            <span class="step-desc">Valida token JWT contra Keycloak JWKS</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">7</span>
+            <span class="step-name">Authorization</span>
+            <span class="step-desc">Verifica pol&iacute;ticas: TenantReader / TenantWriter / TenantAdmin</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">8</span>
+            <span class="step-name">Tenant Middleware</span>
+            <span class="step-desc">Extrae tenant_id del JWT &rarr; TenantContext scoped</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">9</span>
+            <span class="step-name">Audit Middleware</span>
+            <span class="step-desc">Registra operaci&oacute;n con usuario, tenant, duraci&oacute;n</span>
+        </div>
+        <div class="pipeline-arrow">&darr;</div>
+        <div class="pipeline-step">
+            <span class="step-num">10</span>
+            <span class="step-name">Controller + Service</span>
+            <span class="step-desc">Ejecuta la l&oacute;gica de negocio</span>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 10: VALIDACION -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 10</div>
+        <h2>Validaci&oacute;n de Datos</h2>
+    </div>
+
+    <p>
+        Todos los inputs del usuario se validan antes de llegar a la l&oacute;gica de negocio usando
+        <strong>FluentValidation</strong>. Se implementaron <strong>22+ validadores</strong> que cubren
+        todos los endpoints de la API.
+    </p>
+
+    <h3>Ejemplos de Reglas de Validaci&oacute;n</h3>
+
+    <table class="compare-table">
+        <thead><tr><th>Validador</th><th>Reglas</th></tr></thead>
+        <tbody>
+            <tr>
+                <td>MilkCustomersRequest</td>
+                <td>StartDate requerido, EndDate > StartDate, LocationId > 0</td>
+            </tr>
+            <tr>
+                <td>MilkLoadsSearch</td>
+                <td>Al menos Ticket o Manifest debe tener valor</td>
+            </tr>
+            <tr>
+                <td>UpsertMilkLoad</td>
+                <td>IdCustomer > 0, IdUser > 0, Pesos >= 0, ImageType en lista v&aacute;lida, Imagen &leq; 10MB</td>
+            </tr>
+            <tr>
+                <td>PaginationParams</td>
+                <td>Page &geq; 1, PageSize entre 1 y 100 (default 20)</td>
+            </tr>
+            <tr>
+                <td>ChangeStatus</td>
+                <td>QuestionId requerido, Status en valores v&aacute;lidos</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="info-box">
+        <strong>Auto-validaci&oacute;n:</strong> FluentValidation est&aacute; configurado con <code>AddFluentValidationAutoValidation()</code>.
+        Cualquier request que no pase la validaci&oacute;n retorna autom&aacute;ticamente un <strong>HTTP 400</strong> con los errores detallados
+        en formato RFC 7807, sin llegar al controller.
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 11: TESTS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 11</div>
+        <h2>Tests y Calidad</h2>
+    </div>
+
+    <h3>Suite de Tests</h3>
+
+    <table class="compare-table">
+        <thead><tr><th>Tipo</th><th>Qu&eacute; valida</th><th>Framework</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Integration Tests</strong></td>
+                <td>Endpoints completos: request &rarr; middleware &rarr; controller &rarr; response. Incluye validaci&oacute;n, auth, status codes, formato de respuesta.</td>
+                <td>xUnit + WebApplicationFactory</td>
+            </tr>
+            <tr>
+                <td><strong>Validation Tests</strong></td>
+                <td>Cada validador FluentValidation con escenarios v&aacute;lidos e inv&aacute;lidos</td>
+                <td>xUnit + FluentValidation.TestHelper</td>
+            </tr>
+            <tr>
+                <td><strong>Service Tests</strong></td>
+                <td>DatabaseResolver: mapeo correcto de m&oacute;dulo a connection string</td>
+                <td>xUnit</td>
+            </tr>
+            <tr>
+                <td><strong>Middleware Tests</strong></td>
+                <td>Health check, conectividad a bases de datos</td>
+                <td>xUnit</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Tests de Integraci&oacute;n &mdash; Ejemplo</h3>
+    <p>
+        Los tests de integraci&oacute;n usan <code>CustomWebApplicationFactory</code> que levanta la API completa en memoria
+        con un <code>TestAuthHandler</code> que simula tokens JWT con claims de tenant y roles, permitiendo probar
+        todo el pipeline sin depender de Keycloak.
+    </p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 12: COMPARATIVA -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 12</div>
+        <h2>Comparativa Antes vs. Despu&eacute;s</h2>
+    </div>
+
+    <table class="compare-table">
+        <thead>
+            <tr>
+                <th>Aspecto</th>
+                <th><span class="badge-old">Python Flask (Antes)</span></th>
+                <th><span class="badge-new">.NET 10 (Ahora)</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Autenticaci&oacute;n</strong></td>
+                <td>Ninguna. API abierta al p&uacute;blico</td>
+                <td>JWT Bearer via Keycloak con tokens de 15 min</td>
+            </tr>
+            <tr>
+                <td><strong>Autorizaci&oacute;n</strong></td>
+                <td>Ninguna. Todos pueden hacer todo</td>
+                <td>3 niveles: Reader, Writer, Admin por tenant</td>
+            </tr>
+            <tr>
+                <td><strong>Multi-Tenancy</strong></td>
+                <td>No existe. Datos compartidos sin aislamiento</td>
+                <td>4 capas: JWT + Middleware + SESSION_CONTEXT + RLS</td>
+            </tr>
+            <tr>
+                <td><strong>SQL Injection</strong></td>
+                <td>Vulnerable. F-strings con datos del usuario</td>
+                <td>Protegido. Queries parametrizadas con Dapper</td>
+            </tr>
+            <tr>
+                <td><strong>Credenciales</strong></td>
+                <td>Hardcodeadas en database.py (texto plano)</td>
+                <td>En appsettings.json / variables de entorno</td>
+            </tr>
+            <tr>
+                <td><strong>Selecci&oacute;n de BD</strong></td>
+                <td>El cliente elige con campo "db" en el body</td>
+                <td>El servidor determina por m&oacute;dulo/endpoint</td>
+            </tr>
+            <tr>
+                <td><strong>Validaci&oacute;n de input</strong></td>
+                <td>Ninguna</td>
+                <td>22+ validadores FluentValidation</td>
+            </tr>
+            <tr>
+                <td><strong>Rate Limiting</strong></td>
+                <td>Ninguno. Vulnerable a DoS</td>
+                <td>200 req/min por tenant con sliding window</td>
+            </tr>
+            <tr>
+                <td><strong>Auditor&iacute;a</strong></td>
+                <td>Ninguna</td>
+                <td>Logging de cada operaci&oacute;n con usuario, tenant y duraci&oacute;n</td>
+            </tr>
+            <tr>
+                <td><strong>Headers de seguridad</strong></td>
+                <td>Ninguno</td>
+                <td>HSTS, CSP, X-Frame-Options, X-Content-Type-Options</td>
+            </tr>
+            <tr>
+                <td><strong>CORS</strong></td>
+                <td>Abierto a cualquier origen</td>
+                <td>Whitelist de or&iacute;genes configurables</td>
+            </tr>
+            <tr>
+                <td><strong>Manejo de errores</strong></td>
+                <td>debug=True, stack traces expuestos</td>
+                <td>RFC 7807 Problem Details, sin info interna</td>
+            </tr>
+            <tr>
+                <td><strong>Paginaci&oacute;n</strong></td>
+                <td>Sin l&iacute;mite, retorna todo</td>
+                <td>Paginaci&oacute;n obligatoria (max 100 por p&aacute;gina)</td>
+            </tr>
+            <tr>
+                <td><strong>M&eacute;todos HTTP</strong></td>
+                <td>Todo POST</td>
+                <td>GET para lectura, POST/PUT para escritura</td>
+            </tr>
+            <tr>
+                <td><strong>Versionado</strong></td>
+                <td>Sin versi&oacute;n</td>
+                <td>/api/v1/ en todas las rutas</td>
+            </tr>
+            <tr>
+                <td><strong>Documentaci&oacute;n</strong></td>
+                <td>Ninguna</td>
+                <td>Swagger/OpenAPI interactivo con auth</td>
+            </tr>
+            <tr>
+                <td><strong>Tests</strong></td>
+                <td>Ninguno</td>
+                <td>Integration + Validation + Service + Middleware tests</td>
+            </tr>
+            <tr>
+                <td><strong>Logging</strong></td>
+                <td>Console prints b&aacute;sicos</td>
+                <td>Serilog estructurado con contexto</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 13: PROXIMOS PASOS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number">Secci&oacute;n 13</div>
+        <h2>Pr&oacute;ximos Pasos</h2>
+    </div>
+
+    <h3>Pendientes de Implementaci&oacute;n</h3>
+
+    <table class="compare-table">
+        <thead><tr><th>Tarea</th><th>Prioridad</th><th>Descripci&oacute;n</th></tr></thead>
+        <tbody>
+            <tr>
+                <td>Verificaci&oacute;n de entidades restantes</td>
+                <td><span class="badge-old">Alta</span></td>
+                <td>Validar columnas reales de TVFs de Harvest, Commodity, Transfer, Cross contra las entidades C#</td>
+            </tr>
+            <tr>
+                <td>Keycloak en Docker</td>
+                <td><span class="badge-old">Alta</span></td>
+                <td>Levantar instancia de Keycloak en el servidor de producci&oacute;n con el realm "plataforma"</td>
+            </tr>
+            <tr>
+                <td>RLS en SQL Server</td>
+                <td><span class="badge-old">Alta</span></td>
+                <td>Aplicar scripts de Row-Level Security en las tablas que requieran aislamiento por tenant</td>
+            </tr>
+            <tr>
+                <td>BackgroundService (Sync)</td>
+                <td><span class="badge-new">Media</span></td>
+                <td>Migrar el syncController.py (tarea cada 3 min) a un IHostedService en .NET</td>
+            </tr>
+            <tr>
+                <td>Re-ejecuci&oacute;n de tests</td>
+                <td><span class="badge-new">Media</span></td>
+                <td>Correr suite completa de tests despu&eacute;s de las correcciones de entidades</td>
+            </tr>
+            <tr>
+                <td>Docker + docker-compose</td>
+                <td><span class="badge-new">Media</span></td>
+                <td>Contenerizar API + Keycloak para despliegue consistente</td>
+            </tr>
+            <tr>
+                <td>DiagController</td>
+                <td><span class="badge-new">Media</span></td>
+                <td>Remover o proteger el DiagController antes de ir a producci&oacute;n</td>
+            </tr>
+            <tr>
+                <td>Configuraci&oacute;n de secretos</td>
+                <td><span class="badge-new">Media</span></td>
+                <td>Mover credenciales de appsettings a variables de entorno o vault para producci&oacute;n</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ══════════════════════════════════════════ -->
+<div class="doc-footer">
+    <p><strong>APIMASTER</strong> &mdash; Documentaci&oacute;n T&eacute;cnica de Migraci&oacute;n</p>
+    <p>Intelogix &bull; Abril 2026 &bull; Documento Confidencial</p>
+    <p style="margin-top: 8px; font-size: 11px;">
+        Elaborado por Diana Guti&eacute;rrez R&iacute;os &mdash; Departamento de Desarrollo
+    </p>
+</div>
+
+</div> <!-- end content -->
+
+</body>
+</html>

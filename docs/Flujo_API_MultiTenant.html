@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de trabajo del API — Thin Layer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2b6cb0;
+            --accent: #e53e3e;
+            --accent-green: #38a169;
+            --accent-amber: #d97706;
+            --bg-light: #f7fafc;
+            --bg-card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            background: var(--bg-light);
+        }
+
+        /* ── Cover Page ── */
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 40px;
+            page-break-after: always;
+        }
+
+        .cover-logo {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .cover h1 {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        .cover .subtitle {
+            font-size: 20px;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 50px;
+            max-width: 720px;
+        }
+
+        .cover-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .cover-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-top: 32px;
+            font-weight: 500;
+        }
+
+        /* ── Container ── */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* ── Section ── */
+        section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+        }
+
+        .section-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            line-height: 36px;
+            margin-right: 14px;
+            vertical-align: middle;
+        }
+
+        h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin: 22px 0 12px 0;
+        }
+
+        p {
+            font-size: 15px;
+            margin-bottom: 14px;
+            color: var(--text);
+        }
+
+        ul, ol {
+            margin: 14px 0 14px 24px;
+            font-size: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent);
+        }
+
+        pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 16px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        /* ── Tables ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            font-size: 14px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+
+        tbody tr:hover td {
+            background: #f7fafc;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ── Callout boxes ── */
+        .callout {
+            border-left: 4px solid var(--primary-light);
+            background: #ebf8ff;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 18px 0;
+            font-size: 14px;
+        }
+
+        .callout-success {
+            border-left-color: var(--accent-green);
+            background: #f0fff4;
+        }
+
+        .callout-warning {
+            border-left-color: var(--accent-amber);
+            background: #fffbeb;
+        }
+
+        .callout strong {
+            color: var(--primary);
+        }
+
+        /* ── Tags ── */
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .tag-green { background: #c6f6d5; color: #22543d; }
+        .tag-blue  { background: #bee3f8; color: #2a4365; }
+        .tag-amber { background: #fef3c7; color: #78350f; }
+        .tag-red   { background: #fed7d7; color: #742a2a; }
+
+        /* ── Flow diagram ── */
+        .flow {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 18px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* ── Benefit grid ── */
+        .benefit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin: 18px 0;
+        }
+
+        .benefit-card {
+            padding: 20px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .benefit-card strong {
+            display: block;
+            font-size: 15px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .benefit-card span {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        /* ── Print ── */
+        @media print {
+            body { background: white; }
+            .container { padding: 20px; }
+            section { box-shadow: none; border: 1px solid var(--border); page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Cover ── -->
+<div class="cover">
+    <div class="cover-logo">IX</div>
+    <h1>Flujo de trabajo del API</h1>
+    <p class="subtitle">Arquitectura <strong>Thin API</strong> — el discriminador de empresa <code style="background:rgba(255,255,255,0.2); color:white; padding:2px 8px; border-radius:4px;">ID_Business</code> lo administra la BD; el API solo ejecuta</p>
+    <div class="cover-meta">
+        <div><strong>Proyecto:</strong> APIMASTER — Migración Python &rarr; .NET 10</div>
+        <div><strong>Autor:</strong> Diana Gutiérrez</div>
+        <div><strong>Empresa:</strong> Intelogix</div>
+        <div><strong>Fecha:</strong> 16 de abril, 2026</div>
+    </div>
+    <div class="cover-tag">Documento Interno — Revisión de dirección</div>
+</div>
+
+<div class="container">
+
+<!-- ── 1. Modelo actual ── -->
+<section>
+    <h2><span class="section-number">1</span>Modelo actual de la empresa</h2>
+    <p>Cada software/producto del <strong>Desk</strong> maneja múltiples empresas. Todas las empresas viven en una misma BD, diferenciadas por una columna <code>ID_Business</code> (uniqueidentifier / GUID).</p>
+
+    <div class="flow">Servidor SQL (35.223.136.179)
+│
+├── CreditCharges              → Tarjetas, transacciones, gastos
+├── Diesel / Diesel_v3         → Combustible
+├── Alimentos_Integrados       → Alimentación
+├── InventoryAsset             → Vehículos / activos
+├── Payroll                    → Nómina
+├── StaffManagerUtilities      → Contratos, vacaciones, warnings
+├── Employees_General_Info     → Catálogo maestro de empleados
+└── Approval_Prod              → Aprobaciones</div>
+
+    <div class="callout">
+        <strong>Catálogo central de empresas:</strong> <code>CreditCharges.web.vw_business</code><br>
+        Columnas: <code>id_business</code>, <code>short_name</code>, <code>business</code>.<br>
+        Actualmente hay más de 40 empresas registradas (Intepizzaco, Airman, Scoria, Veribest, Lipan Cattle Feeder, In4Life Farms, Richies Towing, etc.).
+    </div>
+
+    <p>Cada tabla operativa (empleados, transacciones, vehículos, combustible, alimentos) lleva <code>ID_Business</code> para saber a qué empresa pertenece el registro.</p>
+</section>
+
+<!-- ── 2. Cómo el API replica el modelo ── -->
+<section>
+    <h2><span class="section-number">2</span>Arquitectura Thin API — cómo opera</h2>
+    <div class="callout callout-success">
+        <strong>Principio de diseño:</strong> el API se comporta como los <strong>Desks</strong>. No administra permisos ni lógica de tenant — eso ya lo resuelve <strong>StaffManager</strong> en el frontend y la <strong>BD</strong> mediante la columna <code>ID_Business</code>.
+    </div>
+
+    <p>El API .NET 10 <strong>NO cambia la base de datos</strong>, <strong>NO implementa multi-tenancy</strong>, <strong>NO decide qué puede ver el usuario</strong>. Solo:</p>
+    <ol>
+        <li>Recibe el <strong>token JWT</strong> del usuario (emitido por Keycloak) para autenticar que el llamador es válido.</li>
+        <li>Recibe los parámetros del request (incluido <code>id_business</code>) y valida el <strong>formato</strong> con FluentValidation.</li>
+        <li>Llama al <strong>TVF/SP correcto</strong> pasando los parámetros tal cual los manda el frontend.</li>
+        <li>Devuelve el <strong>JSON</strong> con lo que SQL Server retorna, sin filtrado extra.</li>
+    </ol>
+
+    <p>El permiso de lectura/escritura por empresa ya está resuelto: el Desk solo mostró al usuario las empresas a las que tiene acceso, y el frontend solo manda requests con los <code>id_business</code> autorizados.</p>
+
+    <h3>Flujo de un request</h3>
+    <div class="flow">┌─────────────┐    1. Login       ┌──────────┐
+│  Frontend   │──────────────────&gt;│ Keycloak │
+│ (StaffMgr)  │&lt;── JWT ───────────│   IdP    │
+└─────────────┘                   └──────────┘
+       │
+       │  2. El usuario elige empresa en el dropdown (ej: CROSS)
+       │  3. GET /api/v1/vehicles?id_business=CROSS_GUID
+       │     Authorization: Bearer &lt;JWT&gt;
+       ▼
+┌────────────────────────────────────────────┐
+│            API .NET 10 (Thin)              │
+│                                            │
+│  [Authorize] → JWT válido?                 │
+│       │                                    │
+│       ▼                                    │
+│  FluentValidation → ¿id_business es GUID?  │
+│       │                                    │
+│       ▼                                    │
+│  Service (Dapper)                          │
+│       │ EXEC TVF_List_Vehicles             │
+│       │      @ID_Business = 'CROSS_GUID'   │
+│       ▼                                    │
+│  SQL Server filtra por ID_Business         │
+└────────────────────────────────────────────┘
+       │
+       ▼  JSON con los vehículos de Cross
+┌─────────────┐
+│  Frontend   │
+└─────────────┘</div>
+
+    <h3>Responsabilidades separadas</h3>
+    <table>
+        <thead><tr><th>Componente</th><th>De qué se encarga</th></tr></thead>
+        <tbody>
+            <tr><td><strong>StaffManager / Desk</strong></td><td>Administra usuarios, empresas asignadas, permisos de lectura/escritura por módulo</td></tr>
+            <tr><td><strong>Keycloak</strong></td><td>Emite JWT válidos al usuario autenticado</td></tr>
+            <tr><td><strong>Frontend</strong></td><td>Muestra al usuario solo las empresas autorizadas y manda requests con el <code>id_business</code> seleccionado</td></tr>
+            <tr><td><strong>API (Thin)</strong></td><td>Valida JWT, valida formato de parámetros, ejecuta TVF/SP, devuelve JSON</td></tr>
+            <tr><td><strong>SQL Server</strong></td><td>Filtra por <code>ID_Business</code> en las TVFs/SPs</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ── 3. Seguridad ── -->
+<section>
+    <h2><span class="section-number">3</span>Por qué este modelo es seguro</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Problema de la API Python actual</th>
+                <th>Cómo lo resuelve la API .NET</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Credenciales <em>hardcodeadas</em> en código</td><td><code>appsettings.json</code> + Secret Manager / variables de entorno</td></tr>
+            <tr><td>SQL concatenado → <strong>SQL Injection</strong></td><td>Parámetros Dapper (<code>@ID_Business</code>) — imposible inyectar</td></tr>
+            <tr><td>Sin autenticación</td><td>JWT Bearer obligatorio en todos los endpoints (<code>[Authorize]</code>)</td></tr>
+            <tr><td>Cualquier request pasa sin validación</td><td>FluentValidation verifica formato (GUID, fechas, tipos) antes de llegar a la BD</td></tr>
+            <tr><td>Sin logging de auditoría</td><td>Serilog registra usuario + endpoint + parámetros + tiempo de respuesta</td></tr>
+            <tr><td>Abuso del API (muchos requests por segundo)</td><td>Rate limiter por usuario (200 req/min por defecto)</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ── 4. Estructura del API ── -->
+<section>
+    <h2><span class="section-number">4</span>Estructura del API por módulo</h2>
+    <p>Cada módulo del Desk (StaffManager, CreditCharges, Diesel, Alimentos, Vehículos) tiene su propio conjunto de endpoints, pero <strong>todos</strong> comparten el mismo patrón de filtrado por <code>ID_Business</code>.</p>
+    <div class="flow">/api/v1/
+  ├── staff/           → Empleados, contratos, vacaciones, warnings
+  │    ├── GET    /employees
+  │    ├── POST   /employees
+  │    ├── PUT    /employees/{id}
+  │    ├── DELETE /employees/{id}
+  │    ├── GET    /contracts
+  │    ├── GET    /vacations
+  │    └── GET    /warnings
+  │
+  ├── credit-charges/  → Tarjetas, transacciones
+  │    ├── GET    /credit-cards
+  │    ├── GET    /transactions
+  │    └── POST   /transactions
+  │
+  ├── diesel/          → Combustible
+  │    ├── GET    /fuel-loads
+  │    └── POST   /fuel-loads
+  │
+  ├── food/            → Alimentos
+  │    └── GET    /consumption
+  │
+  ├── vehicles/        → Vehículos
+  │    ├── GET    /vehicles
+  │    └── POST   /vehicles
+  │
+  └── businesses/      → Catálogo de empresas (solo lectura)
+       └── GET    /businesses   (las que el usuario puede ver)</div>
+</section>
+
+<!-- ── 5. Flujo de desarrollo ── -->
+<section>
+    <h2><span class="section-number">5</span>Flujo de desarrollo por módulo</h2>
+    <p>Para cada módulo se ejecutan los mismos 5 pasos:</p>
+    <ol>
+        <li><strong>Introspección de BD.</strong> Revisar columnas reales de las TVFs/SPs y tablas para saber qué parámetros acepta cada una.</li>
+        <li><strong>Entidades C#.</strong> Crear clases que reflejen 1:1 las columnas reales (sin inventar nombres).</li>
+        <li><strong>Request DTOs + FluentValidation.</strong> Validar <em>formato</em> del input (que <code>id_business</code> sea GUID, que las fechas sean válidas, etc.).</li>
+        <li><strong>Service con Dapper.</strong> Llamar TVF/SP con <code>id_business</code> y demás parámetros que vienen del request — tal cual los manda el frontend.</li>
+        <li><strong>Controller con <code>[Authorize]</code>.</strong> Ruta REST, verbos HTTP correctos (GET/POST/PUT/DELETE), respuestas con código HTTP adecuado.</li>
+    </ol>
+</section>
+
+<!-- ── 6. Plan de entrega ── -->
+<section>
+    <h2><span class="section-number">6</span>Plan de entrega por fases</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fase</th>
+                <th>Módulo</th>
+                <th>Duración</th>
+                <th>Entregable</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>1</td><td>Infraestructura base del API (JWT Auth, FluentValidation, Serilog, Swagger, Rate Limiter)</td><td><span class="tag tag-green">Completado</span></td><td>Base reutilizable para todos los módulos</td></tr>
+            <tr><td>2</td><td><strong>Staff Manager</strong> (empleados, contratos, vacaciones, warnings)</td><td>1 sprint</td><td>Endpoints del StaffManager listos</td></tr>
+            <tr><td>3</td><td><strong>CreditCharges</strong> (tarjetas + transacciones)</td><td>1 sprint</td><td>Frontend CreditCharges conectado</td></tr>
+            <tr><td>4</td><td><strong>Diesel</strong></td><td>0.5 sprint</td><td>Endpoints de combustible</td></tr>
+            <tr><td>5</td><td><strong>Alimentos</strong></td><td>0.5 sprint</td><td>Endpoints de alimentación</td></tr>
+            <tr><td>6</td><td><strong>Vehículos</strong> (InventoryAsset)</td><td>0.5 sprint</td><td>Endpoints de vehículos</td></tr>
+            <tr><td>7</td><td><strong>Approvals</strong></td><td>0.5 sprint</td><td>Endpoints de aprobaciones</td></tr>
+            <tr><td>8</td><td>Cutover — apagar API Python</td><td>—</td><td>Plataforma unificada</td></tr>
+        </tbody>
+    </table>
+
+    <div class="callout callout-success">
+        <strong>Ya completado (previo a este flujo):</strong>
+        <ul style="margin-top:8px;">
+            <li>Scalei (8 endpoints productivos)</li>
+            <li>DairyMobile (entidades verificadas)</li>
+            <li>Migración a .NET 10</li>
+            <li>Autenticación JWT + DevAuthHandler para desarrollo</li>
+            <li>Dropbox reemplazando FTP</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ── 7. Beneficios ── -->
+<section>
+    <h2><span class="section-number">7</span>Beneficios para el negocio</h2>
+    <div class="benefit-grid">
+        <div class="benefit-card">
+            <strong>Una sola API</strong>
+            <span>Todos los productos del Desk (StaffManager, CreditCharges, Diesel, etc.) consumen <code>api.intelogix.mx</code> — un solo punto de mantenimiento.</span>
+        </div>
+        <div class="benefit-card">
+            <strong>Seguridad por empresa</strong>
+            <span>Un usuario de la empresa A nunca puede ver datos de la empresa B, aunque manipule el frontend — el filtrado ocurre en el servidor.</span>
+        </div>
+        <div class="benefit-card">
+            <strong>Escalable</strong>
+            <span>Agregar una empresa nueva = insertar un row en <code>web.vw_business</code>, sin tocar una sola línea de código.</span>
+        </div>
+        <div class="benefit-card">
+            <strong>Auditable</strong>
+            <span>Cada request queda registrado con usuario + <code>ID_Business</code> + acción + timestamp.</span>
+        </div>
+        <div class="benefit-card">
+            <strong>Migración gradual</strong>
+            <span>Los módulos se mueven de Python a .NET uno por uno, sin romper lo que ya funciona.</span>
+        </div>
+        <div class="benefit-card">
+            <strong>Alineado al modelo existente</strong>
+            <span>No se rediseña la BD ni se pide al equipo de datos cambios estructurales — se respeta <code>ID_Business</code>.</span>
+        </div>
+    </div>
+</section>
+
+<!-- ── 8. Confirmación ── -->
+<section>
+    <h2><span class="section-number">8</span>Qué necesito confirmar antes de arrancar Fase 2</h2>
+    <div class="callout callout-warning">
+        <strong>Decisiones pendientes de dirección:</strong>
+        <ol style="margin-top:10px;">
+            <li>¿Cómo viaja el <code>id_business</code> en cada request? Propuesta: como <strong>query string</strong> (<code>?id_business=GUID</code>) para GETs y en el <strong>body JSON</strong> para POST/PUT/DELETE. Así el frontend envía explícitamente la empresa seleccionada en el dropdown.</li>
+            <li>¿Existe un endpoint que devuelva las empresas del usuario, o el frontend consulta directamente <code>web.vw_business</code>? Propuesta: agregar <code>GET /api/v1/businesses</code> para que el frontend pueble el dropdown desde ahí.</li>
+            <li>¿Empezamos Fase 2 por <strong>Empleados</strong> (StaffManager) o hay otro módulo más urgente?</li>
+        </ol>
+    </div>
+</section>
+
+<div class="footer">
+    Intelogix · APIMASTER · Documento generado el 2026-04-16
+</div>
+
+</div>
+
+</body>
+</html>

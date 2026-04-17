@@ -1,0 +1,9 @@
+namespace APIMASTER.Models.Requests;
+
+public class CommoditiesRequest : PaginationParams
+{
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public int? CommodityId { get; set; }
+    public int? VendorId { get; set; }
+}

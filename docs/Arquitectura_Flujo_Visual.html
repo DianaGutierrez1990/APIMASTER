@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Arquitectura — Flujo de APIs Intelogix</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #94a3b8;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .dot-direct { background: #10b981; }
+        .dot-api    { background: #3b82f6; }
+        .dot-auth   { background: #f59e0b; }
+        .dot-db     { background: #ef4444; }
+
+        .diagram {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin: 30px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+
+        .flow-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .flow-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .flow-card.direct { border-left: 4px solid #10b981; }
+        .flow-card.api    { border-left: 4px solid #3b82f6; }
+
+        .flow-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .flow-card .subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 18px;
+        }
+
+        .flow-steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .flow-steps li {
+            counter-increment: step;
+            padding: 10px 0 10px 36px;
+            position: relative;
+            font-size: 14px;
+            color: #cbd5e1;
+            border-bottom: 1px solid #334155;
+        }
+
+        .flow-steps li:last-child { border-bottom: none; }
+
+        .flow-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 26px;
+            height: 26px;
+            background: #334155;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 26px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .flow-card.direct .flow-steps li::before { background: #10b981; }
+        .flow-card.api .flow-steps li::before    { background: #3b82f6; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #0f172a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #fbbf24;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media print {
+            body { background: white; color: #1a202c; }
+            .diagram, .flow-card { background: #f7fafc; border-color: #cbd5e0; }
+            .header h1, .section-title, .flow-card h3 { color: #1a202c; }
+            .flow-steps li { color: #2d3748; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="header">
+        <h1>Flujo de APIs — Ecosistema Intelogix</h1>
+        <p>Cómo Desks, Web y Móvil consumen las bases de datos por software</p>
+    </div>
+
+    <!-- ── Legend ── -->
+    <div class="legend">
+        <div class="legend-item"><span class="legend-dot dot-direct"></span> Conexión directa (Desk)</div>
+        <div class="legend-item"><span class="legend-dot dot-api"></span> Vía API (Web / Móvil)</div>
+        <div class="legend-item"><span class="legend-dot dot-auth"></span> Autenticación (login.intelogix.net)</div>
+        <div class="legend-item"><span class="legend-dot dot-db"></span> Base de datos</div>
+    </div>
+
+    <!-- ── SVG Diagram ── -->
+    <div class="diagram">
+        <svg viewBox="0 0 1200 780" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- ── Defs: arrows & gradients ── -->
+            <defs>
+                <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+                </marker>
+                <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+                </marker>
+
+                <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#1d4ed8"/>
+                </linearGradient>
+                <linearGradient id="gradGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#10b981"/>
+                    <stop offset="100%" stop-color="#047857"/>
+                </linearGradient>
+                <linearGradient id="gradAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f59e0b"/>
+                    <stop offset="100%" stop-color="#d97706"/>
+                </linearGradient>
+                <linearGradient id="gradRed" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ef4444"/>
+                    <stop offset="100%" stop-color="#b91c1c"/>
+                </linearGradient>
+            </defs>
+
+            <!-- ── Layer labels ── -->
+            <text x="40" y="60" fill="#64748b" font-size="12" font-weight="600" letter-spacing="2">CLIENTES</text>
+            <text x="40" y="260" fill="#64748b" font-size="12" font-weight="600" letter-spacing="2">AUTH</text>
+            <text x="40" y="430" fill="#64748b" font-size="12" font-weight="600" letter-spacing="2">API UNIFICADO</text>
+            <text x="40" y="640" fill="#64748b" font-size="12" font-weight="600" letter-spacing="2">BASES DE DATOS</text>
+
+            <!-- ═══════════════════════════ -->
+            <!-- CLIENTES (row 1)             -->
+            <!-- ═══════════════════════════ -->
+
+            <!-- Desk 1 -->
+            <g>
+                <rect x="120" y="80" width="160" height="80" rx="12" fill="url(#gradGreen)" stroke="#10b981" stroke-width="2"/>
+                <text x="200" y="110" text-anchor="middle" fill="white" font-size="14" font-weight="700">Desk — Incidents</text>
+                <text x="200" y="130" text-anchor="middle" fill="#d1fae5" font-size="11">Desktop app</text>
+                <text x="200" y="148" text-anchor="middle" fill="#a7f3d0" font-size="10" font-family="JetBrains Mono">C# / WPF</text>
+            </g>
+
+            <!-- Desk 2 -->
+            <g>
+                <rect x="300" y="80" width="160" height="80" rx="12" fill="url(#gradGreen)" stroke="#10b981" stroke-width="2"/>
+                <text x="380" y="110" text-anchor="middle" fill="white" font-size="14" font-weight="700">Desk — StaffMgr</text>
+                <text x="380" y="130" text-anchor="middle" fill="#d1fae5" font-size="11">Desktop app</text>
+                <text x="380" y="148" text-anchor="middle" fill="#a7f3d0" font-size="10" font-family="JetBrains Mono">C# / WPF</text>
+            </g>
+
+            <!-- Web -->
+            <g>
+                <rect x="600" y="80" width="160" height="80" rx="12" fill="url(#gradBlue)" stroke="#3b82f6" stroke-width="2"/>
+                <text x="680" y="110" text-anchor="middle" fill="white" font-size="14" font-weight="700">Web</text>
+                <text x="680" y="130" text-anchor="middle" fill="#dbeafe" font-size="11">React / Angular</text>
+                <text x="680" y="148" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="JetBrains Mono">Browser</text>
+            </g>
+
+            <!-- Mobile -->
+            <g>
+                <rect x="780" y="80" width="160" height="80" rx="12" fill="url(#gradBlue)" stroke="#3b82f6" stroke-width="2"/>
+                <text x="860" y="110" text-anchor="middle" fill="white" font-size="14" font-weight="700">Móvil</text>
+                <text x="860" y="130" text-anchor="middle" fill="#dbeafe" font-size="11">iOS / Android</text>
+                <text x="860" y="148" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="JetBrains Mono">Flutter / Native</text>
+            </g>
+
+            <!-- External -->
+            <g>
+                <rect x="960" y="80" width="160" height="80" rx="12" fill="url(#gradBlue)" stroke="#3b82f6" stroke-width="2"/>
+                <text x="1040" y="110" text-anchor="middle" fill="white" font-size="14" font-weight="700">Integraciones</text>
+                <text x="1040" y="130" text-anchor="middle" fill="#dbeafe" font-size="11">Terceros / QuickBooks</text>
+                <text x="1040" y="148" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="JetBrains Mono">HTTP clients</text>
+            </g>
+
+            <!-- ═══════════════════════════ -->
+            <!-- AUTH (row 2)                 -->
+            <!-- ═══════════════════════════ -->
+            <g>
+                <rect x="440" y="270" width="320" height="90" rx="12" fill="url(#gradAmber)" stroke="#f59e0b" stroke-width="2"/>
+                <text x="600" y="300" text-anchor="middle" fill="white" font-size="15" font-weight="700">login.intelogix.net</text>
+                <text x="600" y="320" text-anchor="middle" fill="#fef3c7" font-size="12">Servidor de autenticación propio</text>
+                <text x="600" y="340" text-anchor="middle" fill="#fde68a" font-size="11" font-family="JetBrains Mono">POST /api/secure/LoginStd</text>
+                <text x="600" y="354" text-anchor="middle" fill="#fcd34d" font-size="10" font-family="JetBrains Mono">JWT HS256 + connection strings cifradas</text>
+            </g>
+
+            <!-- Arrows from Web/Mobile/External → login -->
+            <path d="M 680 160 L 680 210 Q 680 240 640 270" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrow-amber)" stroke-dasharray="6,4"/>
+            <path d="M 860 160 L 860 210 Q 860 240 720 270" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrow-amber)" stroke-dasharray="6,4"/>
+            <text x="720" y="218" fill="#f59e0b" font-size="11" font-weight="600">① Login</text>
+
+            <!-- ═══════════════════════════ -->
+            <!-- API UNIFICADO (row 3)        -->
+            <!-- ═══════════════════════════ -->
+            <g>
+                <rect x="500" y="440" width="200" height="80" rx="12" fill="url(#gradBlue)" stroke="#3b82f6" stroke-width="3"/>
+                <text x="600" y="470" text-anchor="middle" fill="white" font-size="16" font-weight="800">APIMASTER</text>
+                <text x="600" y="490" text-anchor="middle" fill="#dbeafe" font-size="11">API .NET 10 — Thin Layer</text>
+                <text x="600" y="506" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="JetBrains Mono">Valida JWT → descifra ConnStr</text>
+            </g>
+
+            <!-- Multiple instances hint -->
+            <rect x="480" y="420" width="200" height="80" rx="12" fill="none" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+            <rect x="460" y="400" width="200" height="80" rx="12" fill="none" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+            <text x="360" y="440" fill="#3b82f6" font-size="11" font-weight="600">N instancias detrás</text>
+            <text x="360" y="455" fill="#3b82f6" font-size="11" font-weight="600">del Load Balancer</text>
+
+            <!-- Arrows from Web/Mobile/External → API (with JWT) -->
+            <path d="M 680 160 Q 680 300 620 440" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+            <path d="M 860 160 Q 860 300 640 440" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+            <path d="M 1040 160 Q 1040 300 670 440" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+            <text x="850" y="390" fill="#3b82f6" font-size="11" font-weight="600">② Request + Bearer JWT</text>
+
+            <!-- Arrow login → Web (returns token) -->
+            <path d="M 550 270 Q 540 240 650 210 L 680 160" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#arrow-amber)" opacity="0.6"/>
+
+            <!-- ═══════════════════════════ -->
+            <!-- BASES DE DATOS (row 4)       -->
+            <!-- ═══════════════════════════ -->
+
+            <!-- DB 1 -->
+            <g>
+                <rect x="60" y="660" width="140" height="70" rx="10" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2"/>
+                <text x="130" y="688" text-anchor="middle" fill="white" font-size="13" font-weight="700">Incidents</text>
+                <text x="130" y="710" text-anchor="middle" fill="#fee2e2" font-size="10" font-family="JetBrains Mono">SQL Server</text>
+            </g>
+
+            <!-- DB 2 -->
+            <g>
+                <rect x="220" y="660" width="140" height="70" rx="10" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2"/>
+                <text x="290" y="688" text-anchor="middle" fill="white" font-size="13" font-weight="700">CreditCharges</text>
+                <text x="290" y="710" text-anchor="middle" fill="#fee2e2" font-size="10" font-family="JetBrains Mono">SQL Server</text>
+            </g>
+
+            <!-- DB 3 -->
+            <g>
+                <rect x="380" y="660" width="140" height="70" rx="10" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2"/>
+                <text x="450" y="688" text-anchor="middle" fill="white" font-size="13" font-weight="700">Payroll</text>
+                <text x="450" y="710" text-anchor="middle" fill="#fee2e2" font-size="10" font-family="JetBrains Mono">SQL Server</text>
+            </g>
+
+            <!-- DB 4 -->
+            <g>
+                <rect x="540" y="660" width="140" height="70" rx="10" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2"/>
+                <text x="610" y="688" text-anchor="middle" fill="white" font-size="13" font-weight="700">StaffManager</text>
+                <text x="610" y="710" text-anchor="middle" fill="#fee2e2" font-size="10" font-family="JetBrains Mono">SQL Server</text>
+            </g>
+
+            <!-- DB 5 -->
+            <g>
+                <rect x="700" y="660" width="140" height="70" rx="10" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2"/>
+                <text x="770" y="688" text-anchor="middle" fill="white" font-size="13" font-weight="700">Diesel</text>
+                <text x="770" y="710" text-anchor="middle" fill="#fee2e2" font-size="10" font-family="JetBrains Mono">SQL Server</text>
+            </g>
+
+            <!-- DB 6 -->
+            <g>
+                <rect x="860" y="660" width="140" height="70" rx="10" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2"/>
+                <text x="930" y="688" text-anchor="middle" fill="white" font-size="13" font-weight="700">InventoryAsset</text>
+                <text x="930" y="710" text-anchor="middle" fill="#fee2e2" font-size="10" font-family="JetBrains Mono">SQL Server</text>
+            </g>
+
+            <!-- DB 7 -->
+            <g>
+                <rect x="1020" y="660" width="140" height="70" rx="10" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2"/>
+                <text x="1090" y="688" text-anchor="middle" fill="white" font-size="13" font-weight="700">HR · Más…</text>
+                <text x="1090" y="710" text-anchor="middle" fill="#fee2e2" font-size="10" font-family="JetBrains Mono">SQL Server</text>
+            </g>
+
+            <!-- ═══════════════════════════ -->
+            <!-- Direct lines: Desk → DB      -->
+            <!-- ═══════════════════════════ -->
+            <!-- Desk 1 → Incidents (direct) -->
+            <path d="M 200 160 Q 180 400 130 660" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow-green)"/>
+            <!-- Desk 2 → StaffManager (direct) -->
+            <path d="M 380 160 Q 400 400 610 660" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow-green)"/>
+
+            <text x="100" y="400" fill="#10b981" font-size="11" font-weight="600">ConnStr</text>
+            <text x="100" y="415" fill="#10b981" font-size="11" font-weight="600">directa</text>
+
+            <!-- ═══════════════════════════ -->
+            <!-- API → DBs (dynamic)          -->
+            <!-- ═══════════════════════════ -->
+            <path d="M 540 520 Q 400 580 130 660" stroke="#3b82f6" stroke-width="1.8" fill="none" marker-end="url(#arrow-blue)" opacity="0.85"/>
+            <path d="M 560 520 Q 430 580 290 660" stroke="#3b82f6" stroke-width="1.8" fill="none" marker-end="url(#arrow-blue)" opacity="0.85"/>
+            <path d="M 580 520 Q 520 580 450 660" stroke="#3b82f6" stroke-width="1.8" fill="none" marker-end="url(#arrow-blue)" opacity="0.85"/>
+            <path d="M 600 520 L 610 660" stroke="#3b82f6" stroke-width="1.8" fill="none" marker-end="url(#arrow-blue)" opacity="0.85"/>
+            <path d="M 620 520 Q 680 580 770 660" stroke="#3b82f6" stroke-width="1.8" fill="none" marker-end="url(#arrow-blue)" opacity="0.85"/>
+            <path d="M 640 520 Q 780 580 930 660" stroke="#3b82f6" stroke-width="1.8" fill="none" marker-end="url(#arrow-blue)" opacity="0.85"/>
+            <path d="M 660 520 Q 880 580 1090 660" stroke="#3b82f6" stroke-width="1.8" fill="none" marker-end="url(#arrow-blue)" opacity="0.85"/>
+
+            <text x="720" y="575" fill="#3b82f6" font-size="11" font-weight="600">③ ConnStr descifrada</text>
+            <text x="720" y="590" fill="#3b82f6" font-size="11" font-weight="600">(por request, del token)</text>
+
+        </svg>
+    </div>
+
+    <!-- ── Flow comparison cards ── -->
+    <h2 class="section-title">Cómo trabaja cada canal</h2>
+
+    <div class="flow-row">
+        <!-- Direct / Desk -->
+        <div class="flow-card direct">
+            <h3>🖥️  Desks (Desktop apps)</h3>
+            <div class="subtitle">Ruta directa — no pasan por el API</div>
+            <ol class="flow-steps">
+                <li>El Desk abre con su <code>connection string</code> local hardcoded</li>
+                <li>Se autentica contra SQL Server con un SQL login propio</li>
+                <li>Ejecuta TVFs/SPs directamente en la BD</li>
+                <li>No hay red intermedia, no hay API que pueda caerse</li>
+            </ol>
+            <p style="margin-top: 14px; font-size: 12px; color: #94a3b8;">
+                <strong style="color: #10b981;">Ventaja:</strong> baja latencia, no depende del API.<br>
+                <strong style="color: #f59e0b;">Limitación:</strong> solo funciona dentro de la red corporativa con acceso al puerto 1433.
+            </p>
+        </div>
+
+        <!-- API / Web/Mobile -->
+        <div class="flow-card api">
+            <h3>🌐  Web / Móvil / Terceros</h3>
+            <div class="subtitle">Vía APIMASTER — canal único HTTP</div>
+            <ol class="flow-steps">
+                <li>Hace <code>POST /api/secure/LoginStd</code> a <code>login.intelogix.net</code> y guarda el JWT</li>
+                <li>Envía requests a <code>APIMASTER</code> con <code>Authorization: Bearer &lt;JWT&gt;</code></li>
+                <li>APIMASTER valida firma HMAC, descifra la connection string del token</li>
+                <li>APIMASTER conecta a la BD correcta del software (Incidents, Payroll, etc.) y ejecuta la TVF/SP</li>
+                <li>Devuelve JSON al cliente</li>
+            </ol>
+            <p style="margin-top: 14px; font-size: 12px; color: #94a3b8;">
+                <strong style="color: #3b82f6;">Ventaja:</strong> funciona desde internet, sin exponer SQL al exterior.<br>
+                <strong style="color: #f59e0b;">Escalado:</strong> N instancias stateless del API detrás de un Load Balancer.
+            </p>
+        </div>
+    </div>
+
+    <!-- ── Resilience section ── -->
+    <h2 class="section-title">¿Qué pasa si se cae algo?</h2>
+
+    <div class="flow-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="flow-card" style="border-left: 4px solid #ef4444;">
+            <h3 style="font-size: 15px;">Si cae el API</h3>
+            <p style="font-size: 13px; color: #cbd5e1;">
+                Los <strong style="color: #10b981;">Desks siguen operando</strong> con su conexión directa a SQL.
+                Web/móvil dejan de funcionar hasta que vuelva el API.
+                <strong>Solución:</strong> correr 2+ instancias detrás de Load Balancer — si una muere, las otras absorben.
+            </p>
+        </div>
+        <div class="flow-card" style="border-left: 4px solid #ef4444;">
+            <h3 style="font-size: 15px;">Si cae login.intelogix.net</h3>
+            <p style="font-size: 13px; color: #cbd5e1;">
+                No se pueden emitir tokens nuevos, pero los tokens <strong>ya emitidos siguen siendo válidos</strong> hasta su expiración (<code>exp</code> claim).
+                Los Desks no se afectan.
+            </p>
+        </div>
+        <div class="flow-card" style="border-left: 4px solid #ef4444;">
+            <h3 style="font-size: 15px;">Si cae SQL Server</h3>
+            <p style="font-size: 13px; color: #cbd5e1;">
+                Nada funciona — ni Desks ni API. Es la única dependencia dura. Mitigación: replicación + backups (responsabilidad de infra, no del API).
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        Intelogix · APIMASTER · Diagrama generado el 2026-04-16
+    </div>
+
+</div>
+</body>
+</html>

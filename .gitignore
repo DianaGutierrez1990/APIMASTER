@@ -1,0 +1,31 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.vs/
+*.DotSettings.user
+publish/
+
+## IDE
+.idea/
+.vscode/
+*.swp
+
+## OS
+Thumbs.db
+.DS_Store
+
+## Secrets
+appsettings.*.local.json
+appsettings.Development.json
+appsettings.Production.json
+*.pfx
+*.pem
+.env
+*.log
+
+## Build
+[Dd]ebug/
+[Rr]elease/

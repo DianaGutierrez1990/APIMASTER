@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Única vs API por Software — Comparativa</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2b6cb0;
+            --accent: #e53e3e;
+            --green: #38a169;
+            --amber: #d97706;
+            --bg-light: #f7fafc;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            background: var(--bg-light);
+        }
+
+        /* ── Cover ── */
+        .cover {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 40px;
+            page-break-after: always;
+        }
+
+        .cover-logo {
+            width: 100px; height: 100px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 42px; font-weight: 800;
+            margin-bottom: 40px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .cover h1 {
+            font-size: 42px; font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        .cover .subtitle {
+            font-size: 20px; font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 50px;
+            max-width: 720px;
+        }
+
+        .cover-meta {
+            display: flex; flex-direction: column; gap: 8px;
+            font-size: 14px; opacity: 0.85;
+        }
+
+        .cover-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-top: 32px;
+            font-weight: 500;
+        }
+
+        /* ── Container ── */
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+
+        section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 26px; font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 22px;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 18px; font-weight: 600;
+            color: var(--primary-light);
+            margin: 22px 0 12px 0;
+        }
+
+        p { font-size: 15px; margin-bottom: 14px; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent);
+        }
+
+        /* ── Split layout ── */
+        .split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-top: 20px;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .option-card.monolith { border-color: #3b82f6; }
+        .option-card.split-api { border-color: #10b981; }
+
+        .option-header {
+            padding: 28px;
+            color: white;
+        }
+
+        .option-card.monolith .option-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .option-card.split-api .option-header {
+            background: linear-gradient(135deg, #10b981, #047857);
+        }
+
+        .option-header h3 {
+            color: white;
+            font-size: 22px;
+            margin: 0 0 6px 0;
+        }
+
+        .option-header .tagline {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .option-body {
+            padding: 28px;
+        }
+
+        .option-body .diagram {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+
+        .pros-list, .cons-list {
+            list-style: none;
+            margin: 10px 0 20px 0;
+        }
+
+        .pros-list li, .cons-list li {
+            padding: 10px 12px 10px 42px;
+            position: relative;
+            font-size: 14px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .pros-list li {
+            background: #f0fdf4;
+            color: #14532d;
+        }
+
+        .pros-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 14px; top: 10px;
+            width: 20px; height: 20px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .cons-list li {
+            background: #fef2f2;
+            color: #7f1d1d;
+        }
+
+        .cons-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 14px; top: 10px;
+            width: 20px; height: 20px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .subsection-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .label-pros { background: #d1fae5; color: #065f46; }
+        .label-cons { background: #fee2e2; color: #991b1b; }
+        .label-when { background: #dbeafe; color: #1e3a8a; }
+
+        .when-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 18px 20px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #1e3a8a;
+        }
+
+        /* ── Comparison table ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            font-size: 14px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+            vertical-align: top;
+        }
+
+        td.criterion {
+            font-weight: 600;
+            color: var(--primary);
+            width: 24%;
+        }
+
+        td.monolith-col { background: #eff6ff; width: 38%; }
+        td.split-col    { background: #f0fdf4; width: 38%; }
+
+        tbody tr:last-child td { border-bottom: none; }
+
+        .winner-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            margin-left: 6px;
+        }
+
+        .winner-mono  { background: #3b82f6; color: white; }
+        .winner-split { background: #10b981; color: white; }
+
+        /* ── Recommendation ── */
+        .recommendation {
+            background: linear-gradient(135deg, #eef2ff 0%, #dbeafe 100%);
+            border-radius: 16px;
+            padding: 36px;
+            border: 2px solid var(--primary-light);
+            margin-top: 20px;
+        }
+
+        .recommendation h3 {
+            color: var(--primary);
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+
+        .phase {
+            background: white;
+            border-radius: 10px;
+            padding: 18px 22px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary-light);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        .phase strong {
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .phase p {
+            margin: 6px 0 0 0;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        @media print {
+            body { background: white; }
+            .container { padding: 20px; }
+            section, .option-card { box-shadow: none; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Cover ── -->
+<div class="cover">
+    <div class="cover-logo">IX</div>
+    <h1>API Única vs API por Software</h1>
+    <p class="subtitle">Ventajas, desventajas y cuándo conviene cada arquitectura</p>
+    <div class="cover-meta">
+        <div><strong>Proyecto:</strong> APIMASTER — Ecosistema Intelogix</div>
+        <div><strong>Autor:</strong> Diana Gutiérrez</div>
+        <div><strong>Empresa:</strong> Intelogix</div>
+        <div><strong>Fecha:</strong> 16 de abril, 2026</div>
+    </div>
+    <div class="cover-tag">Documento de decisión arquitectónica</div>
+</div>
+
+<div class="container">
+
+    <!-- ── Intro ── -->
+    <section>
+        <h2>El dilema</h2>
+        <p>Intelogix tiene varios productos (Softwares): <strong>Incidents, Scalei, CreditCharges, Diesel, StaffManager, Alimentos, Payroll, Approvals</strong>, etc. Cada uno consume su propia base de datos. La pregunta es:</p>
+        <p style="font-size: 17px; font-weight: 500; color: var(--primary); padding: 16px 0;">¿Un solo API que atiende a todos los softwares, o un API por cada software?</p>
+        <p>Este documento compara las dos opciones objetivamente para tomar la decisión.</p>
+    </section>
+
+    <!-- ── Side by side cards ── -->
+    <div class="split">
+
+        <!-- ═══════════════════════════════════ -->
+        <!-- MONOLITH                              -->
+        <!-- ═══════════════════════════════════ -->
+        <div class="option-card monolith">
+            <div class="option-header">
+                <h3>Opción A — API Única</h3>
+                <div class="tagline">Un solo API que atiende a todos los softwares</div>
+            </div>
+            <div class="option-body">
+                <div class="diagram">  Web / Móvil / Terceros
+          │
+          ▼
+    ┌──────────────────┐
+    │    APIMASTER     │   ← un solo proyecto
+    │                  │
+    │ /api/v1/staff/   │
+    │ /api/v1/credit/  │
+    │ /api/v1/diesel/  │
+    │ /api/v1/scalei/  │
+    └────────┬─────────┘
+             │
+      ┌──────┼──────┬──────┐
+      ▼      ▼      ▼      ▼
+   StaffDB  CrdDB DieselDB ScaleDB</div>
+
+                <span class="subsection-label label-pros">Ventajas</span>
+                <ul class="pros-list">
+                    <li><strong>Simple de desarrollar</strong> — un solo repo, un solo proyecto, un solo deploy</li>
+                    <li><strong>Infraestructura mínima</strong> — una sola máquina o contenedor basta para arrancar</li>
+                    <li><strong>Autenticación centralizada</strong> — el JWT se valida una sola vez, no en N APIs</li>
+                    <li><strong>Debugging sencillo</strong> — un solo log, un solo stacktrace</li>
+                    <li><strong>Compartir código</strong> — validaciones, servicios comunes, DTOs se reutilizan sin duplicar</li>
+                    <li><strong>Menor costo inicial</strong> — no pagas servidores separados por módulo</li>
+                    <li><strong>Deploy atómico</strong> — todo sube junto, no hay "versiones desfasadas" entre servicios</li>
+                </ul>
+
+                <span class="subsection-label label-cons">Desventajas</span>
+                <ul class="cons-list">
+                    <li><strong>Punto único de falla</strong> — si cae, TODOS los softwares se quedan sin API</li>
+                    <li><strong>Escalado global</strong> — si Diesel tiene mucho tráfico, tienes que escalar TODO el API, no solo Diesel</li>
+                    <li><strong>Deploy arriesgado</strong> — un bug en Staff puede bloquear el deploy de una mejora en Credit</li>
+                    <li><strong>Equipo en conflicto</strong> — varios devs editando el mismo proyecto → merges dolorosos</li>
+                    <li><strong>Release conjunto</strong> — si Credit necesita publicar hoy, tiene que esperar a que Staff esté listo</li>
+                    <li><strong>Crece feo con el tiempo</strong> — si no disciplinas la estructura, se vuelve un "big ball of mud"</li>
+                    <li><strong>Tecnología unificada</strong> — todos los módulos deben ser .NET 10 (no puedes hacer uno en Python si hace falta)</li>
+                </ul>
+
+                <div class="when-box">
+                    <strong>📌 Cuándo conviene:</strong> pocos módulos (&lt;10), equipo pequeño (1-5 devs), primeros 1-2 años del proyecto, quieres mover rápido sin invertir en infra.
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════ -->
+        <!-- SPLIT PER SOFTWARE                    -->
+        <!-- ═══════════════════════════════════ -->
+        <div class="option-card split-api">
+            <div class="option-header">
+                <h3>Opción B — API por Software</h3>
+                <div class="tagline">Un API independiente para cada producto (Incidents, Scalei, CreditCharges…)</div>
+            </div>
+            <div class="option-body">
+                <div class="diagram">  Web / Móvil / Terceros
+          │
+          ▼
+    ┌──────────────────┐
+    │   API Gateway    │   ← enruta por prefijo
+    └────────┬─────────┘
+             │
+    ┌────┬──┴──┬────┬────┐
+    ▼    ▼     ▼    ▼    ▼
+  Staff Credit Diesel Scalei Incidents
+  API   API    API    API    API
+   │     │      │      │      │
+   ▼     ▼      ▼      ▼      ▼
+ StaffDB CrdDB DieselDB ScaleDB IncDB</div>
+
+                <span class="subsection-label label-pros">Ventajas</span>
+                <ul class="pros-list">
+                    <li><strong>Aislamiento de fallas</strong> — si cae Diesel API, Staff y Credit siguen funcionando</li>
+                    <li><strong>Escalado selectivo</strong> — Diesel con 10× tráfico → 10 instancias de Diesel; Staff con 1× → 1 instancia</li>
+                    <li><strong>Deploys independientes</strong> — cada software se publica cuando esté listo, sin esperar a otros</li>
+                    <li><strong>Equipos paralelos</strong> — un dev en Credit, otro en Staff, otro en Diesel, sin chocar en el mismo repo</li>
+                    <li><strong>Tecnología por módulo</strong> — Staff puede ser .NET 10, Alimentos puede ser Python, Scalei puede ser Go</li>
+                    <li><strong>Responsabilidad clara</strong> — el equipo que mantiene Staff es dueño del repo, deploy y uptime de Staff</li>
+                    <li><strong>Límite de blast radius</strong> — un bug grave solo tira a un software, no a todos</li>
+                    <li><strong>Preparado para crecer</strong> — este patrón escala bien a 20, 50 o 100 módulos</li>
+                </ul>
+
+                <span class="subsection-label label-cons">Desventajas</span>
+                <ul class="cons-list">
+                    <li><strong>Infraestructura compleja</strong> — necesitas N servidores/containers + un API Gateway + orquestador (Kubernetes, Docker Swarm)</li>
+                    <li><strong>Más repos y pipelines CI/CD</strong> — cada API es un proyecto con su propio build, tests, deploy</li>
+                    <li><strong>Latencia extra</strong> — cada salto HTTP suma milisegundos (request pasa por Gateway → Bridge API)</li>
+                    <li><strong>Debugging distribuido</strong> — un error puede atravesar 3 servicios → necesitas tracing (OpenTelemetry, Jaeger)</li>
+                    <li><strong>Duplicación de código</strong> — validadores, middlewares, auth handlers se repiten en N proyectos (o sacas librerías compartidas)</li>
+                    <li><strong>Coordinación entre módulos</strong> — si Staff cambia un contrato, Credit puede romperse → necesitas contratos/versionado</li>
+                    <li><strong>Costo operativo mayor</strong> — más máquinas, más logs, más monitoreo, más DevOps</li>
+                    <li><strong>Overkill al principio</strong> — montar toda la infra sin tener tráfico real es desperdicio</li>
+                </ul>
+
+                <div class="when-box">
+                    <strong>📌 Cuándo conviene:</strong> muchos módulos (10+), equipo grande (&gt;8 devs), cada software tiene patrones de tráfico muy distintos, presupuesto para DevOps, requieres 99.9%+ de uptime por software.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Comparison table ── -->
+    <section style="margin-top: 28px;">
+        <h2>Comparativa detallada</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th style="color: #93c5fd;">API Única</th>
+                    <th style="color: #86efac;">API por Software</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="criterion">Complejidad de desarrollo</td>
+                    <td class="monolith-col">Baja. Un solo proyecto. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Alta. N proyectos, contratos entre servicios.</td>
+                </tr>
+                <tr>
+                    <td class="criterion">Velocidad inicial de entrega</td>
+                    <td class="monolith-col">Alta. Cualquier módulo listo en días. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Media. Primeros módulos tardan por setup de infra.</td>
+                </tr>
+                <tr>
+                    <td class="criterion">Aislamiento ante fallas</td>
+                    <td class="monolith-col">Bajo. Un bug tumba todo.</td>
+                    <td class="split-col">Alto. Cada software vive independiente. <span class="winner-badge winner-split">Gana</span></td>
+                </tr>
+                <tr>
+                    <td class="criterion">Escalado por módulo</td>
+                    <td class="monolith-col">No. Todo escala junto.</td>
+                    <td class="split-col">Sí. Cada software escala a su ritmo. <span class="winner-badge winner-split">Gana</span></td>
+                </tr>
+                <tr>
+                    <td class="criterion">Deploy independiente</td>
+                    <td class="monolith-col">No. Todo se publica junto.</td>
+                    <td class="split-col">Sí. Cada software se publica por separado. <span class="winner-badge winner-split">Gana</span></td>
+                </tr>
+                <tr>
+                    <td class="criterion">Reutilización de código</td>
+                    <td class="monolith-col">Total. Compartes auth, validadores, servicios. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Parcial. Necesitas librerías compartidas (NuGet privado).</td>
+                </tr>
+                <tr>
+                    <td class="criterion">Costo operativo (servidores, licencias)</td>
+                    <td class="monolith-col">Bajo. 1-2 máquinas bastan. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Alto. N máquinas + Gateway + orquestador.</td>
+                </tr>
+                <tr>
+                    <td class="criterion">Tiempo de debugging</td>
+                    <td class="monolith-col">Bajo. Un solo log, un stacktrace. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Alto. Necesitas tracing distribuido.</td>
+                </tr>
+                <tr>
+                    <td class="criterion">Requisitos de equipo DevOps</td>
+                    <td class="monolith-col">Mínimos. Un dev puede manejarlo. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Altos. Necesitas rol de DevOps dedicado.</td>
+                </tr>
+                <tr>
+                    <td class="criterion">Trabajo en paralelo de equipos</td>
+                    <td class="monolith-col">Difícil. Merges frecuentes.</td>
+                    <td class="split-col">Fácil. Cada equipo dueño de su repo. <span class="winner-badge winner-split">Gana</span></td>
+                </tr>
+                <tr>
+                    <td class="criterion">Flexibilidad tecnológica</td>
+                    <td class="monolith-col">Uniforme. Todo es .NET 10.</td>
+                    <td class="split-col">Alta. Cada API puede usar su stack ideal. <span class="winner-badge winner-split">Gana</span></td>
+                </tr>
+                <tr>
+                    <td class="criterion">Preparación para crecer (10→50 módulos)</td>
+                    <td class="monolith-col">Mala. Se vuelve inmanejable.</td>
+                    <td class="split-col">Buena. Patrón escala naturalmente. <span class="winner-badge winner-split">Gana</span></td>
+                </tr>
+                <tr>
+                    <td class="criterion">Consistencia entre módulos</td>
+                    <td class="monolith-col">Alta. Mismo stack, mismos patrones. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Requiere disciplina de gobierno y estándares.</td>
+                </tr>
+                <tr>
+                    <td class="criterion">Curva de aprendizaje para nuevos devs</td>
+                    <td class="monolith-col">Corta. Un solo repo que entender. <span class="winner-badge winner-mono">Gana</span></td>
+                    <td class="split-col">Larga. Muchos repos, más contexto a dominar.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 20px; font-size: 14px; color: var(--text-light);">
+            <strong>Resumen del conteo:</strong> API Única gana en <strong>7 criterios</strong> (simplicidad, costo, velocidad, consistencia). API por Software gana en <strong>6 criterios</strong> (resiliencia, escalado, independencia, flexibilidad). No hay un ganador absoluto — depende del momento del proyecto.
+        </p>
+    </section>
+
+    <!-- ── Recommendation ── -->
+    <section>
+        <h2>Recomendación para Intelogix</h2>
+        <div class="recommendation">
+            <h3>🎯 Evolución por fases — lo mejor de los dos mundos</h3>
+            <p style="margin-bottom: 20px;">No hay que elegir de una vez. La estrategia es empezar <strong>monolítico pero bien estructurado</strong> y migrar a <strong>API por software</strong> solo cuando el tráfico y el equipo lo justifiquen.</p>
+
+            <div class="phase">
+                <strong>Fase 1 — Hoy (0 a 12 meses): API Única bien modularizada</strong>
+                <p>Un solo proyecto <code>APIMASTER</code>, pero con <strong>carpetas por software</strong> (<code>Modules/Staff/</code>, <code>Modules/Credit/</code>, <code>Modules/Diesel/</code>). Cada carpeta tiene sus propios Controllers, Services y Entities. Internamente ya opera como si fueran APIs separadas, pero sin el costo de infraestructura.</p>
+            </div>
+
+            <div class="phase">
+                <strong>Fase 2 — Cuando crezca (12 a 24 meses): Identificar módulos que deben separarse</strong>
+                <p>Si un software tiene <strong>mucho más tráfico</strong>, <strong>cambia más seguido</strong>, o <strong>requiere uptime distinto</strong>, se saca a su propio proyecto. El resto sigue en APIMASTER. Se agrega un <strong>API Gateway</strong> (YARP, Kong) al frente.</p>
+            </div>
+
+            <div class="phase">
+                <strong>Fase 3 — A gran escala (24+ meses): API por software consolidado</strong>
+                <p>Cuando el negocio crezca, cada software vive independiente con su propio equipo, repo, deploy y SLA. APIMASTER se convierte en el Gateway o queda como uno más de los bridges.</p>
+            </div>
+
+            <p style="margin-top: 20px; font-weight: 600; color: var(--primary); font-size: 15px;">
+                💡 La clave: <strong>no pagar hoy la complejidad que solo necesitarás en 2 años</strong>, pero estructurar el código para que la migración sea trivial cuando llegue el momento.
+            </p>
+        </div>
+    </section>
+
+    <!-- ── Decision checklist ── -->
+    <section>
+        <h2>Checklist — ¿Qué fase nos toca?</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pregunta</th>
+                    <th>Sí → API por Software</th>
+                    <th>No → API Única</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="criterion">¿Tenemos más de 10 softwares activos?</td><td class="split-col">Favorece separar</td><td class="monolith-col">Única está bien</td></tr>
+                <tr><td class="criterion">¿Tenemos más de 8 desarrolladores en paralelo?</td><td class="split-col">Favorece separar</td><td class="monolith-col">Única está bien</td></tr>
+                <tr><td class="criterion">¿Algún software tiene 10× el tráfico de los demás?</td><td class="split-col">Favorece separar</td><td class="monolith-col">Única está bien</td></tr>
+                <tr><td class="criterion">¿Tenemos equipo de DevOps/infraestructura dedicado?</td><td class="split-col">Favorece separar</td><td class="monolith-col">Única está bien</td></tr>
+                <tr><td class="criterion">¿Un software requiere uptime 99.99% y otros no?</td><td class="split-col">Favorece separar</td><td class="monolith-col">Única está bien</td></tr>
+                <tr><td class="criterion">¿Los softwares cambian con ritmos muy distintos?</td><td class="split-col">Favorece separar</td><td class="monolith-col">Única está bien</td></tr>
+                <tr><td class="criterion">¿Queremos permitir stacks tecnológicos distintos?</td><td class="split-col">Favorece separar</td><td class="monolith-col">Única está bien</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top: 16px; font-size: 14px;">
+            Si respondiste <strong>Sí</strong> a 5 o más preguntas → arrancar con API por Software.<br>
+            Si respondiste <strong>Sí</strong> a menos de 5 → arrancar con API Única modularizada.
+        </p>
+    </section>
+
+    <div class="footer">
+        Intelogix · APIMASTER · Documento de decisión arquitectónica · 2026-04-16
+    </div>
+
+</div>
+
+</body>
+</html>
