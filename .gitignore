@@ -26,6 +26,10 @@ appsettings.Production.json
 .env
 *.log
 
+## Claude Code (contiene credenciales en la allow list)
+.claude/settings.local.json
+.claude/settings.json
+
 ## Build
 [Dd]ebug/
 [Rr]elease/

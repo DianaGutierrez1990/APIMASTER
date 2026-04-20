@@ -34,11 +34,14 @@ public class StoreImageRequestValidator : AbstractValidator<StoreImageRequest>
     public StoreImageRequestValidator()
     {
         RuleFor(x => x.IdCapture).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.IdWeight).NotEmpty().MaximumLength(50);
         RuleFor(x => x.ScaleTicket).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Bol).MaximumLength(50);
-        RuleFor(x => x.Image).NotEmpty();
-        RuleFor(x => x.DocumentType).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.ImageName).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.ImageRoute)
+            .NotEmpty().MaximumLength(500)
+            .Must(r => r != null && r.StartsWith("Scalei_Mobile/"))
+            .WithMessage("image_route debe empezar con 'Scalei_Mobile/'.");
+        RuleFor(x => x.DocumentType).MaximumLength(50);
     }
 }
 
@@ -47,8 +50,7 @@ public class StoreImagesBulkRequestValidator : AbstractValidator<StoreImagesBulk
     public StoreImagesBulkRequestValidator()
     {
         RuleFor(x => x.Items)
-            .NotEmpty().WithMessage("Items array is required.")
-            .Must(items => items.Count <= 10).WithMessage("Maximum 10 items per request.");
+            .NotEmpty().WithMessage("Items array is required.");
 
         RuleForEach(x => x.Items).SetValidator(new StoreImageItemValidator());
     }
@@ -59,11 +61,14 @@ public class StoreImageItemValidator : AbstractValidator<StoreImageItem>
     public StoreImageItemValidator()
     {
         RuleFor(x => x.IdCapture).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.IdWeight).NotEmpty().MaximumLength(50);
         RuleFor(x => x.ScaleTicket).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Bol).MaximumLength(50);
-        RuleFor(x => x.Image).NotEmpty();
-        RuleFor(x => x.DocumentType).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.ImageName).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.ImageRoute)
+            .NotEmpty().MaximumLength(500)
+            .Must(r => r != null && r.StartsWith("Scalei_Mobile/"))
+            .WithMessage("image_route debe empezar con 'Scalei_Mobile/'.");
+        RuleFor(x => x.DocumentType).MaximumLength(50);
     }
 }
 

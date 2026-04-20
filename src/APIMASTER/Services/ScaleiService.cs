@@ -76,37 +76,34 @@ public class ScaleiService : IScaleiService
         return await conn.QueryAsync<DocumentTypeItem>(sql, new { param = string.Empty });
     }
 
-    /// <summary>Update_ITXScale_Images SP</summary>
+    /// <summary>Update_App_Loads_Capture SP — General_Dairyi.App_Loads_capture (original Python bolcontroller.saveEvidence)</summary>
     public async Task StoreImageAsync(string userId, StoreImageRequest request)
     {
-        const string sql = @"EXEC [dbo].[Update_ITXScale_Images]
-            @ID_Image, @ID_Capture, @ID_Weight, @ScaleTicket, @BOL, @Image, @Date, @ID_User, @Document_Type";
+        const string sql = @"EXEC [dbo].[Update_App_Loads_Capture]
+            @ID_Capture, @ScaleTicket, @BOL, @Image_Route, @ID_User, @Document_Type";
 
-        using var conn = _dbResolver.GetConnectionByName("ICCManager");
+        using var conn = _dbResolver.GetConnectionByName("GeneralDairyi");
         await conn.OpenAsync();
         await conn.ExecuteAsync(sql, new
         {
-            ID_Image = Guid.NewGuid(),
-            ID_Capture = Guid.Parse(request.IdCapture),
-            ID_Weight = Guid.Parse(request.IdWeight),
+            ID_Capture = request.IdCapture,
             ScaleTicket = request.ScaleTicket,
             BOL = request.Bol,
-            Image = request.Image,
-            Date = DateTime.UtcNow,
-            ID_User = Guid.Parse(userId),
-            Document_Type = request.DocumentType
+            Image_Route = request.ImageRoute,
+            ID_User = string.IsNullOrWhiteSpace(request.IdUser) ? userId : request.IdUser,
+            Document_Type = request.DocumentType ?? string.Empty
         });
 
-        _logger.LogInformation("Image stored for weight {IdWeight} by user {UserId}", request.IdWeight, userId);
+        _logger.LogInformation("Evidence stored in App_Loads_capture id_capture={IdCapture} image={ImageName} by user {UserId}", request.IdCapture, request.ImageName, userId);
     }
 
-    /// <summary>Bulk version of Update_ITXScale_Images</summary>
+    /// <summary>Bulk version of Update_App_Loads_Capture</summary>
     public async Task<StoreBulkResponse> StoreImagesBulkAsync(string userId, List<StoreImageItem> items)
     {
-        const string sql = @"EXEC [dbo].[Update_ITXScale_Images]
-            @ID_Image, @ID_Capture, @ID_Weight, @ScaleTicket, @BOL, @Image, @Date, @ID_User, @Document_Type";
+        const string sql = @"EXEC [dbo].[Update_App_Loads_Capture]
+            @ID_Capture, @ScaleTicket, @BOL, @Image_Route, @ID_User, @Document_Type";
 
-        using var conn = _dbResolver.GetConnectionByName("ICCManager");
+        using var conn = _dbResolver.GetConnectionByName("GeneralDairyi");
         await conn.OpenAsync();
 
         var results = new List<StoreBulkItemResult>(items.Count);
@@ -118,24 +115,21 @@ public class ScaleiService : IScaleiService
             {
                 await conn.ExecuteAsync(sql, new
                 {
-                    ID_Image = Guid.NewGuid(),
-                    ID_Capture = Guid.Parse(item.IdCapture),
-                    ID_Weight = Guid.Parse(item.IdWeight),
+                    ID_Capture = item.IdCapture,
                     ScaleTicket = item.ScaleTicket,
                     BOL = item.Bol,
-                    Image = item.Image,
-                    Date = DateTime.UtcNow,
-                    ID_User = Guid.Parse(userId),
-                    Document_Type = item.DocumentType
+                    Image_Route = item.ImageRoute,
+                    ID_User = string.IsNullOrWhiteSpace(item.IdUser) ? userId : item.IdUser,
+                    Document_Type = item.DocumentType ?? string.Empty
                 });
 
-                results.Add(new StoreBulkItemResult { IdWeight = item.IdWeight, Status = "ok" });
+                results.Add(new StoreBulkItemResult { IdWeight = item.IdCapture, Status = "ok" });
             }
             catch (Exception ex)
             {
                 failedCount++;
-                results.Add(new StoreBulkItemResult { IdWeight = item.IdWeight, Status = "error", Message = ex.Message });
-                _logger.LogWarning(ex, "Failed to store image for weight {IdWeight}", item.IdWeight);
+                results.Add(new StoreBulkItemResult { IdWeight = item.IdCapture, Status = "error", Message = ex.Message });
+                _logger.LogWarning(ex, "Failed to store evidence for id_capture {IdCapture}", item.IdCapture);
             }
         }
 

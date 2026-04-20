@@ -35,14 +35,11 @@ public class ScaleImagesRequest
     public string EndDate { get; set; } = string.Empty;
 }
 
-// ── POST /store-image — save a single image/evidence ──
+// ── POST /store-image — save a single evidence into General_Dairyi.App_Loads_capture ──
 public class StoreImageRequest
 {
     [JsonPropertyName("id_capture")]
     public string IdCapture { get; set; } = string.Empty;
-
-    [JsonPropertyName("id_weight")]
-    public string IdWeight { get; set; } = string.Empty;
 
     [JsonPropertyName("scale_ticket")]
     public string ScaleTicket { get; set; } = string.Empty;
@@ -50,14 +47,20 @@ public class StoreImageRequest
     [JsonPropertyName("bol")]
     public string Bol { get; set; } = string.Empty;
 
-    [JsonPropertyName("image")]
-    public string Image { get; set; } = string.Empty;
+    [JsonPropertyName("id_user")]
+    public string? IdUser { get; set; }
+
+    [JsonPropertyName("image_name")]
+    public string ImageName { get; set; } = string.Empty;
+
+    [JsonPropertyName("image_route")]
+    public string ImageRoute { get; set; } = string.Empty;
 
     [JsonPropertyName("document_type")]
-    public string DocumentType { get; set; } = string.Empty;
+    public string? DocumentType { get; set; }
 }
 
-// ── POST /store-images-bulk — save up to 10 images ──
+// ── POST /store-images-bulk — save up to 10 evidences ──
 public class StoreImagesBulkRequest
 {
     [JsonPropertyName("items")]
@@ -69,20 +72,23 @@ public class StoreImageItem
     [JsonPropertyName("id_capture")]
     public string IdCapture { get; set; } = string.Empty;
 
-    [JsonPropertyName("id_weight")]
-    public string IdWeight { get; set; } = string.Empty;
-
     [JsonPropertyName("scale_ticket")]
     public string ScaleTicket { get; set; } = string.Empty;
 
     [JsonPropertyName("bol")]
     public string Bol { get; set; } = string.Empty;
 
-    [JsonPropertyName("image")]
-    public string Image { get; set; } = string.Empty;
+    [JsonPropertyName("id_user")]
+    public string? IdUser { get; set; }
+
+    [JsonPropertyName("image_name")]
+    public string ImageName { get; set; } = string.Empty;
+
+    [JsonPropertyName("image_route")]
+    public string ImageRoute { get; set; } = string.Empty;
 
     [JsonPropertyName("document_type")]
-    public string DocumentType { get; set; } = string.Empty;
+    public string? DocumentType { get; set; }
 }
 
 // ── POST /store-document — save a document ──
